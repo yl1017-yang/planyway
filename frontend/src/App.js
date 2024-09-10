@@ -8,7 +8,8 @@ function App() {
 
   // Express 서버에서 메시지를 받아오기
   useEffect(() => {
-    axios.get('http://localhost:5000/api/message')
+    // axios.get('http://localhost:5000/api/message')
+    axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/')
       .then(response => {
         setMessage(response.data.message);
       })
