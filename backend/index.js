@@ -11,7 +11,7 @@ app.use(express.json());
 
 // 예시 API 엔드포인트
 app.get('/api/message', (req, res) => {
-  res.json({ message: 'Hello from Express!' });
+  res.json({ message: 'Hello from Express! 잘 도착했나???' });
 });
 
 app.post('/api/data', (req, res) => {
@@ -27,7 +27,8 @@ app.listen(PORT, () => {
 
 // React 빌드된 파일을 서빙
 app.use(express.static(path.join(__dirname, '../frontend/build')));
-
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
+
+//https://stackoverflow.com/questions/74356508/error-enoent-no-such-file-or-directory-stat-app-backend-frontend-build-inde
