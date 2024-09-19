@@ -4,12 +4,23 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// tul 캘린더
+// import FullCalendar from "./FullCalendar";
+import TuiCalendar from "./TuiCalendar";
+// import ReactCalendar from "./ReactCalendar";
+// import ReactBigCalendar from "./ReactBigCalendar";
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    {/* <App /> */}
+    {/* <ReactBigCalendar /> */}
+    {/* <FullCalendar /> */}
+    <TuiCalendar />
+    {/* <ReactCalendar /> */}
   </React.StrictMode>
 );
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
