@@ -1,6 +1,6 @@
 {
+  "homepage": "https://yl1017-yang.github.io/planyway/",
   "name": "frontend",
-  "homepage": "https://yl1017-yang.github.io/planyway/frontend/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
