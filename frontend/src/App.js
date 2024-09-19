@@ -8,8 +8,8 @@ function App() {
 
   // Express 서버에서 메시지를 받아오기
   useEffect(() => {
-    // axios.get('http://localhost:3000/api/message')
-    axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/')
+    axios.get('http://localhost:3000/api/message')
+    // axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/')
       .then(response => {
         setMessage(response.data.message);
       })
@@ -32,6 +32,7 @@ function App() {
   return (
     <div className="App">
       <h1>{message}</h1>
+      <h2>요청이 오지는 않네</h2>
       <input
         type="text"
         value={inputData}
