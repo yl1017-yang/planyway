@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const path = require('path');
-const PORT = 5000;
+const PORT = 3000;
 
 // CORS 설정 (React와 Express 간의 통신 허용)
 app.use(cors());
