@@ -1,22 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+// import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 // tul 캘린더
 // import FullCalendar from "./FullCalendar";
-import TuiCalendar from "./TuiCalendar";
+// import TuiCalendar from "./TuiCalendar";
 // import ReactCalendar from "./ReactCalendar";
-// import ReactBigCalendar from "./ReactBigCalendar";
+import ReactBigCalendar from "./ReactBigCalendar";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     {/* <App /> */}
-    {/* <ReactBigCalendar /> */}
+    <ReactBigCalendar />
     {/* <FullCalendar /> */}
-    <TuiCalendar />
+    {/* <TuiCalendar /> */}
     {/* <ReactCalendar /> */}
   </React.StrictMode>
 );

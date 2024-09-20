@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/planyway/static/css/main.a7a826ff.css",
+    "main.js": "/planyway/static/js/main.9d0aba0b.js",
+    "static/js/453.8ab44547.chunk.js": "/planyway/static/js/453.8ab44547.chunk.js",
+    "index.html": "/planyway/index.html",
+    "main.a7a826ff.css.map": "/planyway/static/css/main.a7a826ff.css.map",
+    "main.9d0aba0b.js.map": "/planyway/static/js/main.9d0aba0b.js.map",
+    "453.8ab44547.chunk.js.map": "/planyway/static/js/453.8ab44547.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a7a826ff.css",
+    "static/js/main.9d0aba0b.js"
+  ]
+}
