@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
-// import Toolbar from 'react-big-calendar';
 import moment from "moment";
 import events from "./events";
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -19,12 +18,30 @@ function ReactBigCalendar() {
       setEventsData([
         ...eventsData,
         {
+          id: Date.now(), // 고유 ID 추가
           start,
           end,
           title
         }
       ]);
   };
+
+  const handleEventSelect = (event) => {
+    const action = window.prompt("What would you like to do? (edit/delete)");
+    if (action === "edit") {
+      const newTitle = window.prompt("Enter new title", event.title);
+      if (newTitle) {
+        setEventsData(eventsData.map(e => 
+          e.id === event.id ? { ...e, title: newTitle } : e
+        ));
+      }
+    } else if (action === "delete") {
+      if (window.confirm("Are you sure you want to delete this event?")) {
+        setEventsData(eventsData.filter(e => e.id !== event.id));
+      }
+    }
+  };
+
   return (
     <div className="App">
       <Calendar
@@ -39,33 +56,17 @@ function ReactBigCalendar() {
         defaultView="month"
         events={eventsData}
         style={{ width: "90vw", height: "90vh" }}
-        onSelectEvent={(event) => alert(event.title)}
+        // onSelectEvent={(event) => alert(event.title)}
+        onSelectEvent={handleEventSelect}
         onSelectSlot={handleSelect}
-        // components = {{toolbar : CustomToolbar}}
+        // components={{
+        //   toolbar: CustomToolbar
+        // }}
       />
     </div>
   );
 }
 
-// class CustomToolbar extends Toolbar {
-//   render() {
-//     return (
-//       <div className='rbc-toolbar'>
-//         <span className="rbc-btn-group">
-//           <button type="button" onClick={() => this.navigate('TODAY')} >today</button>
-//           <button type="button" onClick={() => this.navigate('PREV')}>back</button>
-//           <button type="button" onClick={() => this.navigate('NEXT')}>next</button>
-//         </span>
-//         <span className="rbc-toolbar-label">{this.props.label}</span>
-//       </div>
-//     );
-//   }
 
-//   navigate = action => {
-//     console.log(action);
-    
-//     this.props.onNavigate(action)
-//   }
-// }
 
 export default ReactBigCalendar;
