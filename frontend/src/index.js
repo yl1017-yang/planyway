@@ -2,8 +2,8 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom";
 
 // import App from "./App";
-// import FullCalendar from "./FullCalendar";
-import TuiCalendar from "./TuiCalendar";
+import FullCalendar from "./FullCalendar";
+// import TuiCalendar from "./TuiCalendar";
 // import TuiCalendar2 from "./TuiCalendar2";
 // import ReactCalendar from "./ReactCalendar";
 // import ReactBigCalendar from "./ReactBigCalendar";
@@ -11,8 +11,8 @@ import TuiCalendar from "./TuiCalendar";
 const rootElement = document.getElementById("root");
 ReactDOM.render(
   <StrictMode>
-    {/* <FullCalendar /> */}
-    <TuiCalendar />
+    <FullCalendar />
+    {/* <TuiCalendar /> */}
     {/* <TuiCalendar2 /> */}
     {/* <ReactCalendar /> */}
     {/* <ReactBigCalendar /> */}
