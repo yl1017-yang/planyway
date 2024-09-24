@@ -4,9 +4,9 @@ module.exports = {
     mode: 'production',
     entry: './index.js',
     output: {
-        path: path.join(__dirname, './dist'),
-        publicPath: './public',
-        filename: 'index.js',
+        path: path.join(__dirname, '../frontend/build'),
+        publicPath: '/',
+        filename: 'bundle.js',
     },
     target: 'node',
 };

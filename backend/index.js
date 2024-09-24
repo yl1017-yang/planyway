@@ -20,17 +20,17 @@ app.post('/api/data', (req, res) => {
   res.json({ status: 'Data received' });
 });
 
-// 서버 실행
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
 // React의 build 폴더를 정적 파일로 서빙
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 // 모든 요청에 대해 React의 index.html을 반환
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+});
+
+// 서버 실행
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
 
 
