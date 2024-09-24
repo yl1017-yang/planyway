@@ -35,3 +35,6 @@ app.get('*', (req, res) => {
 
 
 //https://stackoverflow.com/questions/74356508/error-enoent-no-such-file-or-directory-stat-app-backend-frontend-build-inde
+
+
+//webpack을 빌드 https://velog.io/@judemin/Backend-Koyeb-%ED%98%B8%EC%8A%A4%ED%8C%85

@@ -116,7 +116,7 @@ const schedules = [
     color: '#fff',
     backgroundColor: '#9e5fff',
     customStyle: {
-      fontStyle: 'italic',
+      fontStyle: 'bold',
       fontSize: '15px',
     },
   },
@@ -272,35 +272,30 @@ class TestCal extends React.Component {
     // 이전 달로 이동하는 버튼
     handleClickPrevButton = () => {
       const calendarInstance = this.calendarRef.current.getInstance();
-
       calendarInstance.prev();
     };
 
     // 다음 달로 이동하는 버튼
     handleClickNextButton = () => {
       const calendarInstance = this.calendarRef.current.getInstance();
-
       calendarInstance.next();
     };
 
     // 주간뷰 보기    ( defaultView = month 로 수정해놓았습니다 )
     weekChangeButton = () => {
       const calendarInstance = this.calendarRef.current.getInstance();
-
       calendarInstance.changeView('week', true);
     }
 
     // 월간뷰 보기
     momthChangeButton = () => {
       const calendarInstance = this.calendarRef.current.getInstance();
-
       calendarInstance.changeView('month', true);
     }
 
     // 일간뷰 보기
     handleClickDayButton = () => {
       const calendarInstance = this.calendarRef.current.getInstance();
-
       calendarInstance.changeView('day', true);
     }
 
