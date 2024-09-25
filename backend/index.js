@@ -1,40 +1,42 @@
+// backend/server.js
 const express = require('express');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
-const path = require('path');
-const PORT = 3000;
+const port = 3000;
 
-// CORS 설정 (React와 Express 간의 통신 허용)
 app.use(cors());
-// app.use(cors({ origin: 'http://localhost:3000' })); // React 앱의 URL
-app.use(express.json());
+app.use(bodyParser.json());
 
-// 예시 API 엔드포인트
-app.get('/api/message', (req, res) => {
-  res.json({ message: 'Hello from Express! 잘 도착했나???' });
+let events = [
+  { id: '1', title: '[메인] Event 1', description: '내용 1', start: '2024-09-01', end: '2024-09-03', backgroundColor: 'green', label: '풀샵', completed: false },
+  { id: '2', title: '[퍼블] Event 2', description: '내용 2', start: '2024-09-02', end: '2024-09-04', backgroundColor: 'blue', label: '올가', completed: false },
+  { id: '3', title: '[퍼블] Event 333', description: '내용333333', start: '2024-09-05', end: '2024-09-10', backgroundColor: 'blue', label: '상세', completed: false },
+];
+
+app.get('/events', (req, res) => {
+  res.json(events);
 });
 
-app.post('/api/data', (req, res) => {
-  const data = req.body;
-  console.log('Received data:', data);
-  res.json({ status: 'Data received' });
+app.post('/events', (req, res) => {
+  const newEvent = { ...req.body, id: (events.length + 1).toString() };
+  events.push(newEvent);
+  res.json(newEvent);
 });
 
-// React의 build 폴더를 정적 파일로 서빙
-app.use(express.static(path.join(__dirname, '../frontend/build')));
-
-// 모든 요청에 대해 React의 index.html을 반환
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+app.put('/events/:id', (req, res) => {
+  const { id } = req.params;
+  const updatedEvent = req.body;
+  events = events.map(event => (event.id === id ? updatedEvent : event));
+  res.json(updatedEvent);
 });
 
-// 서버 실행
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.delete('/events/:id', (req, res) => {
+  const { id } = req.params;
+  events = events.filter(event => event.id !== id);
+  res.json({ id });
 });
 
-
-//https://stackoverflow.com/questions/74356508/error-enoent-no-such-file-or-directory-stat-app-backend-frontend-build-inde
-
-
-//webpack을 빌드 https://velog.io/@judemin/Backend-Koyeb-%ED%98%B8%EC%8A%A4%ED%8C%85
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
