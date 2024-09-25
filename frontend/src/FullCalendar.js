@@ -52,19 +52,14 @@ const FullCalendarPage = () => {
     setNewEvent({ ...newEvent, label: value, backgroundColor: labelColors[value] });
   };
 
-  const handleAddEvent = async () => {
+  const handleAddEvent = () => {
     if (!newEvent.title) {
       alert('제목은 꼭 입력해주세요');
       return;
     }
-    try {
-      const response = await axios.post('http://localhost:5000/events', newEvent);
-      setEvents([...events, response.data]);
-      setShowModal(false);
-      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
-    } catch (error) {
-      console.error('Error adding event:', error);
-    }
+    setEvents([...events, { ...newEvent, id: (events.length + 1).toString()}]);
+    setShowModal(false);
+    setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '' });
   };
 
   const handleEventClick = (clickInfo) => {
@@ -82,33 +77,23 @@ const FullCalendarPage = () => {
     setShowModal(true);
   };
 
-  const handleEditEvent = async () => {
+  const handleEditEvent = () => {
     if (!newEvent.title) {
       alert('제목은 꼭 입력해주세요');
       return;
     }
-    try {
-      const response = await axios.put(`http://localhost:5000/events/${selectedEvent.id}`, newEvent);
-      setEvents(events.map(event => event.id === selectedEvent.id ? response.data : event));
-      setShowModal(false);
-      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
-      setSelectedEvent(null);
-    } catch (error) {
-      console.error('Error editing event:', error);
-    }
+    setEvents(events.map(event => event.id === selectedEvent.id ? { ...newEvent, id: selectedEvent.id } : event));
+    setShowModal(false);
+    setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '' });
+    setSelectedEvent(null);
   };
 
-  const handleDeleteEvent = async () => {
-    try {
-      await axios.delete(`http://localhost:5000/events/${selectedEvent.id}`);
-      setEvents(events.filter(event => event.id !== selectedEvent.id));
-      setShowModal(false);
-      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
-      setSelectedEvent(null);
-    } catch (error) {
-      console.error('Error deleting event:', error);
-    }
-  };
+  const handleDeleteEvent = () => {
+    setEvents(events.filter(event => event.id !== selectedEvent.id));
+    setShowModal(false);
+    setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '' });
+    setSelectedEvent(null);
+};
 
   const handleCompletedChange = (e) => {
     setNewEvent({ ...newEvent, completed: e.target.checked });
