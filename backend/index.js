@@ -11,7 +11,6 @@ app.use(bodyParser.json());
 let events = [
   { id: '1', title: '[메인] Event 1', description: '내용 1', start: '2024-09-01', end: '2024-09-03', backgroundColor: 'green', label: '풀샵', completed: false },
   { id: '2', title: '[퍼블] Event 2', description: '내용 2', start: '2024-09-02', end: '2024-09-04', backgroundColor: 'blue', label: '올가', completed: false },
-  { id: '3', title: '[퍼블] Event 333', description: '내용333333', start: '2024-09-05', end: '2024-09-10', backgroundColor: 'blue', label: '상세', completed: false },
 ];
 
 app.get('/events', (req, res) => {
