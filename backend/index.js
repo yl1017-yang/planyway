@@ -31,13 +31,8 @@ app.put('/events/:id', (req, res) => {
 
 app.delete('/events/:id', (req, res) => {
   const { id } = req.params;
-  const eventIndex = events.findIndex(event => event.id === id);
-  if (eventIndex !== -1) {
-    events.splice(eventIndex, 1);
-    res.json({ id });
-  } else {
-    res.status(404).json({ error: 'Event not found' });
-  }
+  events = events.filter(event => event.id !== id);
+  res.json({ id });
 });
 
 app.listen(port, () => {
