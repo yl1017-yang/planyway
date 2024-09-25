@@ -21,7 +21,7 @@ const FullCalendarPage = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/events');
+      const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events');
       setEvents(response.data);
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -52,14 +52,19 @@ const FullCalendarPage = () => {
     setNewEvent({ ...newEvent, label: value, backgroundColor: labelColors[value] });
   };
 
-  const handleAddEvent = () => {
+  const handleAddEvent = async () => {
     if (!newEvent.title) {
       alert('제목은 꼭 입력해주세요');
       return;
     }
-    setEvents([...events, { ...newEvent, id: (events.length + 1).toString()}]);
-    setShowModal(false);
-    setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '' });
+    try {
+      const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', newEvent);
+      setEvents([...events, response.data]);
+      setShowModal(false);
+      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
+    } catch (error) {
+      console.error('Error adding event:', error);
+    }
   };
 
   const handleEventClick = (clickInfo) => {
@@ -77,23 +82,33 @@ const FullCalendarPage = () => {
     setShowModal(true);
   };
 
-  const handleEditEvent = () => {
+  const handleEditEvent = async () => {
     if (!newEvent.title) {
       alert('제목은 꼭 입력해주세요');
       return;
     }
-    setEvents(events.map(event => event.id === selectedEvent.id ? { ...newEvent, id: selectedEvent.id } : event));
-    setShowModal(false);
-    setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '' });
-    setSelectedEvent(null);
+    try {
+      const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, newEvent);
+      setEvents(events.map(event => event.id === selectedEvent.id ? response.data : event));
+      setShowModal(false);
+      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
+      setSelectedEvent(null);
+    } catch (error) {
+      console.error('Error editing event:', error);
+    }
   };
 
-  const handleDeleteEvent = () => {
-    setEvents(events.filter(event => event.id !== selectedEvent.id));
-    setShowModal(false);
-    setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '' });
-    setSelectedEvent(null);
-};
+  const handleDeleteEvent = async () => {
+    try {
+      await axios.delete(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`);
+      setEvents(events.filter(event => event.id !== selectedEvent.id));
+      setShowModal(false);
+      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
+      setSelectedEvent(null);
+    } catch (error) {
+      console.error('Error deleting event:', error);
+    }
+  };
 
   const handleCompletedChange = (e) => {
     setNewEvent({ ...newEvent, completed: e.target.checked });
@@ -118,13 +133,13 @@ const FullCalendarPage = () => {
         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
         initialView="dayGridMonth"
         events={events}
-        height="auto"
+        height="100vh"
         locale={'ko'}
         timeZone="Asia/Seoul"
         firstDay={1}
         weekends={true}
         headerToolbar={{
-          start: 'prev,next today',
+          start: 'prevYear,prev,next,nextYear today',
           center: 'title',
           end: "dayGridMonth dayGridWeek dayGridDay"
         }}

@@ -43,8 +43,7 @@ input[type='text']:focus::-moz-placeholder{visibility:hidden}
 input[type='text']:focus:-ms-input-placeholder{visibility:hidden}
 
 #calendar-container {
-  width: 100vw;
-  height: 100vh;
+
 }
 
 /* 달력부분 */
