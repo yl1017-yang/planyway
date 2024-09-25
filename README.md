@@ -7,7 +7,7 @@ https://second.wealthydove.com/entry/koyeb%EC%84%B8%ED%8C%85#google_vignette
 https://www.koyeb.com/
 
 
-리액트 페이지  git 배포 시작하기
+## 리액트 페이지  git 배포 시작하기
 
 npm install gh-pages
 
@@ -24,45 +24,21 @@ package.json
 
 
 
-https://ui.toast.com/tui-calendar
+## 프로그램: fullcalendar api 사용
+npm install --save @fullcalendar/react @fullcalendar/core @fullcalendar/daygrid @fullcalendar/interaction
 
-리액트
-https://github.com/nhn/toast-ui.react-calendar
+https://medium.com/@iamkjw/fullcalendar-with-react-2e22ce4e36ea
 
-https://codesandbox.io/p/sandbox/toast-uireact-calendar-82fi9?file=%2Fsrc%2Findex.tsx
-
-https://codesandbox.io/p/sandbox/react-xkn9wb
+https://fullcalendar.io/docs
 
 
-npm install @toast-ui/calendar
-npm install --save @toast-ui/react-calendar
+## 서버: Koyeb는 서버리스 클라우드 플랫폼 사용
+https://app.koyeb.com/
+node js 배포
 
-npm install --save tui-date-picker
+## 디비: MongoDB Atlas
+https://www.mongodb.com/ko-kr/docs/atlas/reference/free-shared-limitations/
 
-
-
-https://kenna-hwa.tistory.com/52
-
-
-npm i react-calendar
-
-https://velog.io/@hyerani/React-%EC%BA%98%EB%A6%B0%EB%8D%94-%EB%A7%8C%EB%93%A4%EA%B8%B0-react-calendar
-
-
-
-npm install --save react-big-calendar
-
-npm install moment
-
-https://devth.tistory.com/120
-
-
-
-npm install --save @fullcalendar/react @fullcalendar/core @fullcalendar/daygrid
-
-npm install @fullcalendar/core @fullcalendar/interaction @fullcalendar/daygrid
-
-
-npm install style-loader css-loader sass-loader node-sass --save
-
-https://velog.io/@hwakyoung/React-fullcalendar-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0
+Username: yangwonder1017
+pw: WAuKrDZUoDfAfsQY
+mongodb+srv://yangwonder1017:WAuKrDZUoDfAfsQY@cluster-planyway.dou1w.mongodb.net/
