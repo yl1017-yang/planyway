@@ -136,7 +136,7 @@ const FullCalendarPage = () => {
         height="100vh"
         locale={'ko'}
         timeZone="Asia/Seoul"
-        firstDay={1}
+        // firstDay={1}
         weekends={true}
         headerToolbar={{
           start: 'prevYear,prev,next,nextYear today',
