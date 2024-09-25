@@ -21,7 +21,7 @@ const FullCalendarPage = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/events');
+      const response = await axios.get('http://localhost:5000/events');
       setEvents(response.data);
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -88,7 +88,7 @@ const FullCalendarPage = () => {
       return;
     }
     try {
-      const response = await axios.put(`http://localhost:3000/events/${selectedEvent.id}`, newEvent);
+      const response = await axios.put(`http://localhost:5000/events/${selectedEvent.id}`, newEvent);
       setEvents(events.map(event => event.id === selectedEvent.id ? response.data : event));
       setShowModal(false);
       setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
@@ -100,7 +100,7 @@ const FullCalendarPage = () => {
 
   const handleDeleteEvent = async () => {
     try {
-      await axios.delete(`http://localhost:3000/events/${selectedEvent.id}`);
+      await axios.delete(`http://localhost:5000/events/${selectedEvent.id}`);
       setEvents(events.filter(event => event.id !== selectedEvent.id));
       setShowModal(false);
       setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
