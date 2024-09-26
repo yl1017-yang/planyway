@@ -8,32 +8,6 @@ const port = 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// MongoDB connection
-mongoose.connect('mongodb+srv://yangwonder1017:0KffJ8dB5DIWmZeP@cluster-planyway.dou1w.mongodb.net/planywayApp');
-
-const db = mongoose.connection;
-
-db.on('error', () => {
-  console.log('Connection Failed!');
-});
-
-db.once('open', () => {
-  console.log('Connected!');
-});
-
-// Define Event schema and model
-const eventSchema = new mongoose.Schema({
-  title: String,
-  description: String,
-  start: String,
-  end: String,
-  backgroundColor: String,
-  label: String,
-  completed: Boolean,
-});
-
-const Event = mongoose.model('Event', eventSchema);
-
 // Routes
 app.get('/events', async (req, res) => {
   try {
@@ -77,3 +51,30 @@ app.delete('/events/:id', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+
+
+// MongoDB connection
+mongoose.connect('mongodb+srv://yangwonder1017:0KffJ8dB5DIWmZeP@cluster-planyway.dou1w.mongodb.net/planywayApp');
+
+const db = mongoose.connection;
+
+db.on('error', () => {
+  console.log('Connection Failed!');
+});
+
+db.once('open', () => {
+  console.log('Connected!');
+});
+
+// Define Event schema and model
+const eventSchema = mongoose.Schema({
+  title: String,
+  description: String,
+  start: String,
+  end: String,
+  backgroundColor: String,
+  label: String,
+  completed: Boolean,
+});
+
+const Event = mongoose.model('Event', eventSchema);
