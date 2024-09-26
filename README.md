@@ -37,8 +37,19 @@ https://app.koyeb.com/
 node js 배포
 
 ## 디비: MongoDB Atlas
+https://steemit.com/kr/@talkit/009-mongodb-atlas
 https://www.mongodb.com/ko-kr/docs/atlas/reference/free-shared-limitations/
 
+
 Username: yangwonder1017
-pw: WAuKrDZUoDfAfsQY
-mongodb+srv://yangwonder1017:WAuKrDZUoDfAfsQY@cluster-planyway.dou1w.mongodb.net/
+pw: 0KffJ8dB5DIWmZeP
+mongodb+srv://yangwonder1017:0KffJ8dB5DIWmZeP@cluster-planyway.dou1w.mongodb.net/
+
+Database Name : planywayApp
+Collection Name : planyway
+
+https://javafa.gitbooks.io/nodejs_server_basic/content/chapter12.html
+https://blog.naver.com/kimmingul/223192903728?trackingCode=rss
+
+mongdo + koyeb
+https://www.koyeb.com/docs/integrations/databases/mongodb-atlas

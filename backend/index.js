@@ -1,38 +1,77 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const mongoose = require('mongoose');
 const app = express();
 const port = 5000;
 
 app.use(cors());
 app.use(bodyParser.json());
 
-let events = [
-  { id: '1', title: '[메인] Event 1', description: '내용 1', start: '2024-09-01', end: '2024-09-03', backgroundColor: 'green', label: '풀샵', completed: false },
-  { id: '2', title: '[퍼블] Event 2', description: '내용 2', start: '2024-09-02', end: '2024-09-04', backgroundColor: 'blue', label: '올가', completed: false },
-];
+// MongoDB connection
+mongoose.connect('mongodb+srv://yangwonder1017:0KffJ8dB5DIWmZeP@cluster-planyway.dou1w.mongodb.net/planywayApp');
 
-app.get('/events', (req, res) => {
-  res.json(events);
+const db = mongoose.connection;
+
+db.on('error', () => {
+  console.log('Connection Failed!');
 });
 
-app.post('/events', (req, res) => {
-  const newEvent = { ...req.body, id: (events.length + 1).toString() };
-  events.push(newEvent);
-  res.json(newEvent);
+db.once('open', () => {
+  console.log('Connected!');
 });
 
-app.put('/events/:id', (req, res) => {
+// Define Event schema and model
+const eventSchema = new mongoose.Schema({
+  title: String,
+  description: String,
+  start: String,
+  end: String,
+  backgroundColor: String,
+  label: String,
+  completed: Boolean,
+});
+
+const Event = mongoose.model('Event', eventSchema);
+
+// Routes
+app.get('/events', async (req, res) => {
+  try {
+    const events = await Event.find();
+    res.json(events);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch events' });
+  }
+});
+
+app.post('/events', async (req, res) => {
+  try {
+    const newEvent = new Event(req.body);
+    await newEvent.save();
+    res.json(newEvent);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create event' });
+  }
+});
+
+app.put('/events/:id', async (req, res) => {
   const { id } = req.params;
-  const updatedEvent = req.body;
-  events = events.map(event => (event.id === id ? updatedEvent : event));
-  res.json(updatedEvent);
+  try {
+    const updatedEvent = await Event.findByIdAndUpdate(id, req.body, { new: true });
+    res.json(updatedEvent);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update event' });
+  }
 });
 
-app.delete('/events/:id', (req, res) => {
+app.delete('/events/:id', async (req, res) => {
   const { id } = req.params;
-  events = events.filter(event => event.id !== id);
-  res.json({ id });
+  try {
+    await Event.findByIdAndDelete(id);
+    res.json({ id });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete event' });
+  }
 });
 
 app.listen(port, () => {
