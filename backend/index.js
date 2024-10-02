@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const app = express();
 const port = 5000;
 
@@ -54,6 +54,7 @@ app.listen(port, () => {
 });
 
 
+//https://www.mongodb.com/ko-kr/docs/guides/crud/insert/
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://yangwonder1017:0KffJ8dB5DIWmZeP@cluster-planyway.dou1w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-planyway";
@@ -73,11 +74,29 @@ async function connectToDatabase() {
     // 클라이언트를 서버에 연결
     await client.connect();
     // 성공적인 연결을 확인하기 위해 ping 전송
-    await client.db("admin").command({ ping: 1 });
-    console.log("배포를 ping했습니다. MongoDB에 성공적으로 연결되었습니다!");
-  } catch (error) {
-    console.error('MongoDB 연결에 실패했습니다', error);
+    // await client.db("admin").command({ ping: 1 });
+    // await client.db("planywayApp").command({ ping: 1 });
+    // console.log("배포를 ping했습니다. MongoDB에 성공적으로 연결되었습니다!");
+
+    const db = client.db("planywayApp");
+    const coll = db.collection("events");
+    const docs = [
+      { id: '1', title: '[메인] Event 1', description: '내용 1', start: '2024-09-01', end: '2024-09-03', backgroundColor: 'green', label: '풀샵', completed: false },
+      { id: '2', title: '[퍼블] Event 2', description: '내용 2', start: '2024-09-02', end: '2024-09-04', backgroundColor: 'blue', label: '올가', completed: false }
+    ];
+    const result = await coll.insertMany(docs);
+    // display the results of your operation
+    console.log(result.insertedIds);
+
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
   }
+
+
+  // } catch (error) {
+  //   console.error('MongoDB 연결에 실패했습니다', error);
+  // }
 }
 
 connectToDatabase();
