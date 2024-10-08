@@ -166,8 +166,8 @@ const FullCalendarPage = () => {
             buttonText: '일간'
           }
         }}
-        eventColor="#000"
-        eventTextColor="#000"
+        eventColor="rgba(0, 0, 0, 0.8)"
+        eventTextColor="rgba(0, 0, 0, 0.8)"
         eventBackgroundColor="#e6f6e3"
         dateClick={onDateClick}
         eventClick={handleEventClick}
