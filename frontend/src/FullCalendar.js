@@ -85,7 +85,7 @@ const FullCalendarPage = () => {
       title: clickInfo.event.title,
       description: clickInfo.event.extendedProps.description,
       start: clickInfo.event.startStr,
-      end: clickInfo.event.endStr,
+      end: clickInfo.event.endStr || clickInfo.event.startStr, // 끝나는 날짜가 설정되도록 수정
       backgroundColor: clickInfo.event.backgroundColor,
       label: clickInfo.event.extendedProps.label,
       completed: clickInfo.event.extendedProps.completed || false,
@@ -130,7 +130,8 @@ const FullCalendarPage = () => {
     const isCompleted = eventInfo.event.extendedProps.completed;
     return (
       <div style={{ textDecoration: isCompleted ? 'line-through' : 'none' }}>
-        {eventInfo.event.title}
+        {eventInfo.event.title} 
+        {/* ({eventInfo.event.startStr} ~ {eventInfo.event.endStr}) */}
       </div>
     );
   };
@@ -138,31 +139,6 @@ const FullCalendarPage = () => {
   const dayCellContent = (dayCellInfo) => {
     return dayCellInfo.dayNumberText.replace('일', '');
   };
-
-    // 드래그 수정 시 호출되는 함수
-    const handleEventDrop = async (info) => {
-      const updatedEvent = {
-        ...info.event,
-        start: info.event.start,
-        end: info.event.end,
-      };
-  
-      try {
-        const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${info.event.id}`, {
-          title: updatedEvent.title,
-          start: updatedEvent.startStr,
-          end: updatedEvent.endStr,
-          description: updatedEvent.extendedProps.description,
-          backgroundColor: updatedEvent.backgroundColor,
-          label: updatedEvent.extendedProps.label,
-          completed: updatedEvent.extendedProps.completed,
-        });
-  
-        setEvents(events.map(event => event.id === updatedEvent.id ? { id: response.data._id, ...response.data } : event));
-      } catch (error) {
-        console.error('Error updating event:', error);
-      }
-    };
 
   return (
     <div>
@@ -204,7 +180,6 @@ const FullCalendarPage = () => {
         nowIndicator={true}
         eventResizableFromStart={true}
         dayCellContent={dayCellContent}
-        eventDrop={handleEventDrop} // 드래그 수정 시 호출되는 함수
       />
 
       {showModal && (
