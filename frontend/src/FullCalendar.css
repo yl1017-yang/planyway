@@ -120,7 +120,7 @@ input[type='text']:focus:-ms-input-placeholder{visibility:hidden}
 
 /* Tody Cell에 배경색 주기 */
 .fc .fc-daygrid-day.fc-day-today {
-  background-color: #eee;
+  background-color: #f4f4f4;
 }
 
 /* 날짜 Cell 프레임 */
@@ -131,8 +131,8 @@ input[type='text']:focus:-ms-input-placeholder{visibility:hidden}
 /* 월간,주간 view의 Cell이 시작하는 위치 */
 .fc .fc-daygrid-day-top {
   flex-direction: row;
-  height: 30px;
-  margin-bottom: 3px;
+  height: 28px;
+  margin-bottom: 0;
 }
 
 /* 날짜 숫자 z-index 초기화 */
@@ -142,7 +142,7 @@ input[type='text']:focus:-ms-input-placeholder{visibility:hidden}
 
 /* 이벤트 막대 스타일 */
 .fc-event {
-  padding: 3px 10px;
+  padding: 1px 10px;
   margin-bottom: 0;
   border-radius: 4px;
   border: 0;
