@@ -7,9 +7,14 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(cors({
-  //origin: 'https://yl1017-yang.github.io',  // GitHub Pages URL
-  origin: 'http://localhost:3000', // 로컬 개발 환경
+  origin: [
+    'http://localhost:3000', // 로컬 개발 환경
+    'https://yl1017-yang.github.io' // GitHub Pages
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // 허용할 HTTP 메서드
+  credentials: true // 쿠키와 인증 정보를 포함할 수 있도록 설정
 }));
+
 app.use(bodyParser.json());
 
 // const uri = "mongodb+srv://yangwonder1017:0KffJ8dB5DIWmZeP@cluster-planyway.dou1w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-planyway";
