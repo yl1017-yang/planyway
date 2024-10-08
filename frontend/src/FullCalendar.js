@@ -52,12 +52,14 @@ const FullCalendarPage = () => {
   const handleLabelChange = (e) => {
     const { value } = e.target;
     const labelColors = {
-      풀샵: '#3F6C51',
-      올가: '#FABC2A',
-      상세: '#9395D3',
-      퍼블: '#BD93BD',
-      외부몰: '#F39A9D',
-      기타: '#999',
+      풀샵: '#e6f6e3',
+      올가: '#fff5d0',
+      상세: '#ffeeab',
+      퍼블: '#efdef6',
+      외부몰: '#bde1f5',
+      운영: '#d2f7f0',
+      프론트: '#ffddd9',
+      기타: '#eee',
     };
     setNewEvent({ ...newEvent, label: value, backgroundColor: labelColors[value] });
   };
@@ -164,9 +166,9 @@ const FullCalendarPage = () => {
             buttonText: '일간'
           }
         }}
-        eventColor="#fff"
-        eventTextColor="#fff"
-        eventBackgroundColor="#089196"
+        eventColor="#000"
+        eventTextColor="#000"
+        eventBackgroundColor="#e6f6e3"
         dateClick={onDateClick}
         eventClick={handleEventClick}
         eventContent={eventContent}
@@ -200,12 +202,14 @@ const FullCalendarPage = () => {
             <label>
               <span>라벨</span>
               <select name="label" value={newEvent.label} onChange={handleLabelChange}>
-                <option value="풀샵" style={{ backgroundColor: '#3F6C51'}}>풀샵</option>
-                <option value="올가" style={{ backgroundColor: '#FABC2A'}}>올가</option>
-                <option value="상세" style={{ backgroundColor: '#9395D3'}}>상세</option>
-                <option value="퍼블" style={{ backgroundColor: '#BD93BD'}}>퍼블</option>
-                <option value="외부몰" style={{ backgroundColor: '#F39A9D'}}>외부몰</option>
-                <option value="기타" style={{ backgroundColor: '#999'}}>기타</option>
+                <option value="풀샵" style={{ backgroundColor: '#e6f6e3'}}>풀샵</option>
+                <option value="올가" style={{ backgroundColor: '#fff5d0'}}>올가</option>
+                <option value="상세" style={{ backgroundColor: '#ffeeab'}}>상세</option>
+                <option value="퍼블" style={{ backgroundColor: '#efdef6'}}>퍼블</option>
+                <option value="외부몰" style={{ backgroundColor: '#bde1f5'}}>외부몰</option>
+                <option value="운영" style={{ backgroundColor: '#d2f7f0'}}>운영</option>
+                <option value="프론트" style={{ backgroundColor: '#ffddd9'}}>프론트</option>
+                <option value="기타" style={{ backgroundColor: '#eee'}}>기타</option>
               </select>
             </label>                  
             <button onClick={isEditing ? handleEditEvent : handleAddEvent}>
