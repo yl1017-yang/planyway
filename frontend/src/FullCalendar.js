@@ -101,7 +101,7 @@ const FullCalendarPage = () => {
     }
     try {
       const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, newEvent);
-      setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data } : event)); // 수정된 이벤트의 _id를 id로 변환
+      setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data } : event));
       setShowModal(false);
       setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
       setSelectedEvent(null);
@@ -138,6 +138,31 @@ const FullCalendarPage = () => {
   const dayCellContent = (dayCellInfo) => {
     return dayCellInfo.dayNumberText.replace('일', '');
   };
+
+    // 드래그 수정 시 호출되는 함수
+    const handleEventDrop = async (info) => {
+      const updatedEvent = {
+        ...info.event,
+        start: info.event.start,
+        end: info.event.end,
+      };
+  
+      try {
+        const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${info.event.id}`, {
+          title: updatedEvent.title,
+          start: updatedEvent.startStr,
+          end: updatedEvent.endStr,
+          description: updatedEvent.extendedProps.description,
+          backgroundColor: updatedEvent.backgroundColor,
+          label: updatedEvent.extendedProps.label,
+          completed: updatedEvent.extendedProps.completed,
+        });
+  
+        setEvents(events.map(event => event.id === updatedEvent.id ? { id: response.data._id, ...response.data } : event));
+      } catch (error) {
+        console.error('Error updating event:', error);
+      }
+    };
 
   return (
     <div>
@@ -179,6 +204,7 @@ const FullCalendarPage = () => {
         nowIndicator={true}
         eventResizableFromStart={true}
         dayCellContent={dayCellContent}
+        eventDrop={handleEventDrop} // 드래그 수정 시 호출되는 함수
       />
 
       {showModal && (
