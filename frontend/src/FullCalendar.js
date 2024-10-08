@@ -22,7 +22,6 @@ const FullCalendarPage = () => {
   const fetchEvents = async () => {
     try {
       const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events');
-      // MongoDB의 _id를 id로 변환
       const formattedEvents = response.data.map(event => ({
         id: event._id, // MongoDB의 _id를 id로 변환
         title: event.title,
