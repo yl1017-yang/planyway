@@ -22,7 +22,18 @@ const FullCalendarPage = () => {
   const fetchEvents = async () => {
     try {
       const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events');
-      setEvents(response.data);
+      // MongoDB의 _id를 id로 변환
+      const formattedEvents = response.data.map(event => ({
+        id: event._id, // MongoDB의 _id를 id로 변환
+        title: event.title,
+        description: event.description,
+        start: event.start,
+        end: event.end,
+        backgroundColor: event.backgroundColor,
+        label: event.label,
+        completed: event.completed,
+      }));
+      setEvents(formattedEvents);
     } catch (error) {
       console.error('Error fetching events:', error);
     }
@@ -59,7 +70,7 @@ const FullCalendarPage = () => {
     }
     try {
       const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', newEvent);
-      setEvents([...events, response.data]);
+      setEvents([...events, { id: response.data._id, ...response.data }]); // 새로 추가된 이벤트의 _id를 id로 변환
       setShowModal(false);
       setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
     } catch (error) {
@@ -89,7 +100,7 @@ const FullCalendarPage = () => {
     }
     try {
       const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, newEvent);
-      setEvents(events.map(event => event.id === selectedEvent.id ? response.data : event));
+      setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data } : event)); // 수정된 이벤트의 _id를 id로 변환
       setShowModal(false);
       setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
       setSelectedEvent(null);
@@ -136,7 +147,6 @@ const FullCalendarPage = () => {
         height="100vh"
         locale={'ko'}
         timeZone="Asia/Seoul"
-        // firstDay={1}
         weekends={true}
         headerToolbar={{
           start: 'prevYear,prev,next,nextYear today',
