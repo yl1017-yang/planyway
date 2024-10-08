@@ -13,8 +13,7 @@ npm install gh-pages
 
 package.json
 
-"homepage": "https://bam-j.github.io/pages/"
-
+"homepage": "https://yl1017-yang.github.io/planyway",
 "scripts": {
     (...)
     "predeploy": "npm run build",
@@ -36,7 +35,10 @@ https://fullcalendar.io/docs
 https://app.koyeb.com/
 node js 배포
 
+
 ## 디비: MongoDB Atlas
+# 데이터 용량 500MB까지 무료로 제공
+
 https://steemit.com/kr/@talkit/009-mongodb-atlas
 https://www.mongodb.com/ko-kr/docs/atlas/reference/free-shared-limitations/
 
@@ -44,6 +46,7 @@ https://www.mongodb.com/ko-kr/docs/atlas/reference/free-shared-limitations/
 Username: yangwonder1017
 pw: 0KffJ8dB5DIWmZeP
 mongodb+srv://yangwonder1017:0KffJ8dB5DIWmZeP@cluster-planyway.dou1w.mongodb.net/
+const uri = "mongodb+srv://yangwonder1017:0KffJ8dB5DIWmZeP@cluster-planyway.dou1w.mongodb.net/planyway?retryWrites=true&w=majority";
 
 Database Name : planywayApp
 Collection Name : planyway
@@ -51,5 +54,8 @@ Collection Name : planyway
 https://javafa.gitbooks.io/nodejs_server_basic/content/chapter12.html
 https://blog.naver.com/kimmingul/223192903728?trackingCode=rss
 
+
 mongdo + koyeb
 https://www.koyeb.com/docs/integrations/databases/mongodb-atlas
+
+
