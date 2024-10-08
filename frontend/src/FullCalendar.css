@@ -120,7 +120,7 @@ input[type='text']:focus:-ms-input-placeholder{visibility:hidden}
 
 /* Tody Cell에 배경색 주기 */
 .fc .fc-daygrid-day.fc-day-today {
-  background-color: #e6895724;
+  background-color: #eee;
 }
 
 /* 날짜 Cell 프레임 */
