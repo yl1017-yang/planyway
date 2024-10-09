@@ -89,7 +89,7 @@ const FullCalendarPage = () => {
     try {
       const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', {
         ...newEvent,
-        allDay: true, // 하루 종일 이벤트로 설정
+        allDay: true,
       });
       setEvents([...events, { id: response.data._id, ...response.data }]); // 새로 추가된 이벤트의 _id를 id로 변환
       setShowModal(false);
