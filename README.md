@@ -1,6 +1,6 @@
 # planyway
 
-https://yl1017-yang.github.io/planyway/frontend/
+https://yl1017-yang.github.io/planyway/
 
 https://second.wealthydove.com/entry/koyeb%EC%84%B8%ED%8C%85#google_vignette
 
@@ -11,8 +11,7 @@ https://www.koyeb.com/
 
 npm install gh-pages
 
-package.json
-
+--- package.json ----
 "homepage": "https://yl1017-yang.github.io/planyway",
 "scripts": {
     (...)
@@ -33,7 +32,8 @@ https://fullcalendar.io/docs
 
 ## 서버: Koyeb는 서버리스 클라우드 플랫폼 사용
 https://app.koyeb.com/
-node js 배포
+https://wet-luisa-yang-yang-253f1741.koyeb.app/events  //디비 출력 주소
+깃허브 로그인 / node js 배포
 
 
 ## 디비: MongoDB Atlas
@@ -57,5 +57,3 @@ https://blog.naver.com/kimmingul/223192903728?trackingCode=rss
 
 mongdo + koyeb
 https://www.koyeb.com/docs/integrations/databases/mongodb-atlas
-
-

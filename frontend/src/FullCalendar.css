@@ -47,6 +47,58 @@ input[type='text']:focus:-ms-input-placeholder{visibility:hidden}
 }
 
 /* 달력부분 */
+:root {
+  --fc-small-font-size: 0.85em;
+
+  --fc-page-bg-color: #fff;
+  --fc-neutral-bg-color: hsla(0, 0%, 82%, 0.3);
+  --fc-neutral-text-color: grey;
+  --fc-border-color: #ddd;
+
+  --fc-button-text-color: #fff;
+
+  /* --fc-button-bg-color: #f3af00;
+  --fc-button-border-color: #f3af00;
+
+  --fc-button-hover-bg-color: #f8cf66;
+  --fc-button-hover-border-color: #f8cf66;
+
+  --fc-button-active-bg-color: #f8cf66;
+  --fc-button-active-border-color: #f8cf66; */
+
+  --fc-event-bg-color: #3788d8;
+  --fc-event-border-color: none;
+  --fc-event-text-color: #fff;
+  --fc-event-selected-overlay-color: rgba(0, 0, 0, 0.25);
+
+  --fc-more-link-bg-color: #d0d0d0;
+  --fc-more-link-text-color: inherit;
+
+  --fc-event-resizer-thickness: 8px;
+  --fc-event-resizer-dot-total-width: 8px;
+  --fc-event-resizer-dot-border-width: 1px;
+
+  --fc-non-business-color: hsla(0, 0%, 84%, 0.3);
+
+  --fc-bg-event-color: #8fdf82;
+  --fc-bg-event-opacity: 0.3;
+
+  --fc-highlight-color: rgba(188, 232, 241, 0.3);
+  --fc-today-bg-color: rgba(255, 220, 40, 0.15);
+
+  --fc-now-indicator-color: red;
+
+  --fc-daygrid-event-dot-width: 8px;
+}
+
+.fc {
+  /* height: 90vh;
+  margin: 20px; */
+}
+
+.fc-daygrid-event {
+  border: none;
+}
 
 /* 일요일 날짜: 빨간색 */
 .fc .fc-day-sun a {
@@ -159,23 +211,26 @@ input[type='text']:focus:-ms-input-placeholder{visibility:hidden}
 
 /* 모달 팝업 */
 .modal {
-  position: fixed;
-  z-index: 1;
+  position: absolute;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
   overflow: auto;
   background-color: rgba(0,0,0,0.4);
-  display: flex;
+  display: flex !important;
   justify-content: center;
   align-items: center;
   z-index: 5;
+  display: none;
+}
+
+.modal.show {
+  display: block;
 }
 
 .modal-content {
   background-color: #fefefe;
-  margin: auto;
   padding: 30px;
   border: 1px solid #888;
   width: 80%;
