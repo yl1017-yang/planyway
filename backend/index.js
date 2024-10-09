@@ -31,7 +31,8 @@ const eventSchema = new mongoose.Schema({
   end: { type: String, required: true },
   backgroundColor: String,
   label: String,
-  completed: Boolean
+  completed: Boolean,
+  allDay: { type: Boolean, default: true }
 });
 
 const Event = mongoose.model('Event', eventSchema);

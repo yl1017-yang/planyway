@@ -31,6 +31,7 @@ const FullCalendarPage = () => {
         backgroundColor: event.backgroundColor,
         label: event.label,
         completed: event.completed,
+        allDay: event.allDay || true,
       }));
       setEvents(formattedEvents);
     } catch (error) {
@@ -70,10 +71,11 @@ const FullCalendarPage = () => {
       title: clickInfo.event.title,      
       description: clickInfo.event.extendedProps.description,
       start: clickInfo.event.startStr,
-      end: clickInfo.event.endStr ? new Date(clickInfo.event.endStr).toISOString().split('T')[0] : clickInfo.event.startStr, // 종료일 수정
+      end: clickInfo.event.endStr || clickInfo.event.startStr, // 끝나는 날짜가 설정되도록 수정
       backgroundColor: clickInfo.event.backgroundColor,
       label: clickInfo.event.extendedProps.label,
       completed: clickInfo.event.extendedProps.completed || false,
+      allDay: true,
     });
     setIsEditing(true);
     setShowModal(true);
@@ -87,9 +89,9 @@ const FullCalendarPage = () => {
     try {
       const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', {
         ...newEvent,
-        end: new Date(newEvent.end).setDate(new Date(newEvent.end).getDate() + 1) // 종료일 수정
+        allDay: true, // 하루 종일 이벤트로 설정
       });
-      setEvents([...events, { id: response.data._id, ...response.data }]);
+      setEvents([...events, { id: response.data._id, ...response.data }]); // 새로 추가된 이벤트의 _id를 id로 변환
       setShowModal(false);
       setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false }); 
     } catch (error) {
@@ -105,7 +107,7 @@ const FullCalendarPage = () => {
     try {
       const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, {
         ...newEvent,
-        end: new Date(newEvent.end).setDate(new Date(newEvent.end).getDate() + 1) // 종료일 수정
+        allDay: true, // 하루 종일 이벤트로 설정
       });
       setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data } : event));
       setShowModal(false);
@@ -132,11 +134,12 @@ const FullCalendarPage = () => {
     const updatedEvent = {
       id: changeInfo.event.id,
       title: changeInfo.event.title,
-      start: changeInfo.event.startStr, // 시작 날짜
-      end: changeInfo.event.endStr || changeInfo.event.startStr, // 종료 날짜가 없을 경우 시작 날짜로 설정
+      start: changeInfo.event.startStr, 
+      end: changeInfo.event.endStr,
       backgroundColor: changeInfo.event.backgroundColor,
       label: changeInfo.event.extendedProps.label,
       completed: changeInfo.event.extendedProps.completed || false,
+      allDay: true, 
     };
 
     try {
@@ -152,10 +155,11 @@ const FullCalendarPage = () => {
       id: info.event.id,
       title: info.event.title,
       start: info.event.startStr,
-      end: info.event.endStr || info.event.startStr, // 종료 날짜가 없을 경우 시작 날짜로 설정
+      end: info.event.endStr,
       backgroundColor: info.event.backgroundColor,
       label: info.event.extendedProps.label,
       completed: info.event.extendedProps.completed || false,
+      allDay: true,
     };
 
     try {
@@ -206,7 +210,9 @@ const FullCalendarPage = () => {
         events={events}
         height="100vh"
         locale={'ko'}
-        timeZone="Asia/Seoul"
+        // timeZone="Asia/Seoul"
+        timeZone="UTC"
+        allDay={true}
         weekends={true}
         headerToolbar={{
           left: 'prevYear,prev,next,nextYear today',
@@ -254,10 +260,6 @@ const FullCalendarPage = () => {
         // navLinkHint={"클릭시 해당 날짜로 이동합니다."} // 날짜에 호버시 힌트 문구
         eventResizableFromStart={true}        
         dayCellContent={dayCellContent}
-
-        startTime={true}
-        endTime={true}
-        allDay={true}
       />
 
       {showModal && (
