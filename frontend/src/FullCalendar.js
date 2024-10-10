@@ -21,7 +21,7 @@ const FullCalendarPage = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events');
+      const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events?limit=7'); //axios.get 호출의 URL에 ?limit=7 쿼리 파라미터를 추가하여 가져오는 이벤트 수를 7개로 제한
       const formattedEvents = response.data.map(event => ({
         id: event._id, // MongoDB의 _id를 id로 변환
         title: event.title,

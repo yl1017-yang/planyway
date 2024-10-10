@@ -39,8 +39,9 @@ const Event = mongoose.model('Event', eventSchema);
 
 // Routes
 app.get('/events', async (req, res) => {
+  const limit = parseInt(req.query.limit) || 300; // 쿼리 파라미터에서 limit 값을 가져오고, 기본값은 300으로 설정
   try {
-    const events = await Event.find();
+    const events = await Event.find().limit(limit); // limit을 사용하여 가져오는 이벤트 수를 제한
     res.json(events);
   } catch (err) {
     res.status(500).json({ message: err.message });
