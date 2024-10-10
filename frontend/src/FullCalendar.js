@@ -39,7 +39,7 @@ const FullCalendarPage = () => {
   };
 
   const onDateClick = (arg) => {
-    setNewEvent({ ...newEvent, start: arg.dateStr, end: arg.dateStr });
+    setNewEvent({ title: '', description: '', start: arg.dateStr, end: arg.dateStr, backgroundColor: '', label: '', completed: false }); // 제목 초기화 추가
     setIsEditing(false);
     setShowModal(true);
   };
