@@ -31,7 +31,6 @@ const FullCalendarPage = () => {
         backgroundColor: event.backgroundColor,
         label: event.label,
         completed: event.completed,
-        allDay: event.allDay || true,
       }));
       setEvents(formattedEvents);
     } catch (error) {
@@ -68,14 +67,13 @@ const FullCalendarPage = () => {
   const handleEventClick = (clickInfo) => {
     setSelectedEvent(clickInfo.event);
     setNewEvent({
-      title: clickInfo.event.title,      
+      title: clickInfo.event.title,
       description: clickInfo.event.extendedProps.description,
       start: clickInfo.event.startStr,
-      end: clickInfo.event.endStr || clickInfo.event.startStr, // 끝나는 날짜가 설정되도록 수정
+      end: clickInfo.event.endStr ? clickInfo.event.endStr : clickInfo.event.startStr, // 끝나는 날짜가 설정되도록 수정
       backgroundColor: clickInfo.event.backgroundColor,
       label: clickInfo.event.extendedProps.label,
-      completed: clickInfo.event.extendedProps.completed || false,
-      allDay: true,
+      completed: clickInfo.event.extendedProps.completed || false
     });
     setIsEditing(true);
     setShowModal(true);
@@ -89,7 +87,6 @@ const FullCalendarPage = () => {
     try {
       const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', {
         ...newEvent,
-        allDay: true,
       });
       setEvents([...events, { id: response.data._id, ...response.data }]); // 새로 추가된 이벤트의 _id를 id로 변환
       setShowModal(false);
@@ -107,7 +104,6 @@ const FullCalendarPage = () => {
     try {
       const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, {
         ...newEvent,
-        allDay: true, // 하루 종일 이벤트로 설정
       });
       setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data } : event));
       setShowModal(false);
@@ -139,7 +135,6 @@ const FullCalendarPage = () => {
       backgroundColor: changeInfo.event.backgroundColor,
       label: changeInfo.event.extendedProps.label,
       completed: changeInfo.event.extendedProps.completed || false,
-      allDay: true, 
     };
 
     try {
@@ -159,7 +154,6 @@ const FullCalendarPage = () => {
       backgroundColor: info.event.backgroundColor,
       label: info.event.extendedProps.label,
       completed: info.event.extendedProps.completed || false,
-      allDay: true,
     };
 
     try {
@@ -212,7 +206,7 @@ const FullCalendarPage = () => {
         locale={'ko'}
         // timeZone="Asia/Seoul"
         timeZone="UTC"
-        allDay={true}
+        // allDay={true}
         weekends={true}
         headerToolbar={{
           left: 'prevYear,prev,next,nextYear today',
