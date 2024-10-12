@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 
 // const uri = "mongodb+srv://yangwonder1017:0KffJ8dB5DIWmZeP@cluster-planyway.dou1w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-planyway";
 const uri = process.env.MONGODB_URI || "mongodb+srv://yangwonder1017:0KffJ8dB5DIWmZeP@cluster-planyway.dou1w.mongodb.net/planyway?retryWrites=true&w=majority";
-mongoose.connect(uri)
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }) // 새로운 옵션 추가
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log('MongoDB connection error:', err));
 
@@ -31,7 +31,7 @@ const eventSchema = new mongoose.Schema({
   end: { type: String, required: true },
   backgroundColor: String,
   label: String,
-  completed: Boolean,
+  completed: { type: Boolean, default: false }, 
   // allDay: { type: Boolean, default: true }
 });
 
@@ -72,7 +72,10 @@ app.put('/events/:id', async (req, res) => {
 
 app.delete('/events/:id', async (req, res) => {
   try {
-    await Event.findByIdAndDelete(req.params.id);
+    const deletedEvent = await Event.findByIdAndDelete(req.params.id);
+    if (!deletedEvent) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
     res.json({ message: 'Event deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -88,5 +91,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`서버가 포트 ${port}에서 실행 중입니다.`);
 });
