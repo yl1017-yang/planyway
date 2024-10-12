@@ -27,19 +27,12 @@ mongoose.connect(uri)
 const eventSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: String,
-  start: { 
-    type: String, 
-    required: true,
-    set: date => new Date(date).toISOString().split('T')[0] // 'YYYY-MM-DD' 형식으로 저장
-  },
-  end: { 
-    type: String, 
-    required: true,
-    set: date => new Date(date).toISOString().split('T')[0] // 'YYYY-MM-DD' 형식으로 저장
-  },
+  start: { type: String, required: true },
+  end: { type: String, required: true },
   backgroundColor: String,
   label: String,
   completed: Boolean,
+  // allDay: { type: Boolean, default: true }
 });
 
 const Event = mongoose.model('Event', eventSchema);
@@ -84,6 +77,14 @@ app.delete('/events/:id', async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    message: 'An unexpected error occurred',
+    error: process.env.NODE_ENV === 'production' ? {} : err
+  });
 });
 
 app.listen(port, () => {
