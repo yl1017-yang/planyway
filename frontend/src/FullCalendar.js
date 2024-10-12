@@ -19,6 +19,10 @@ const FullCalendarPage = () => {
     fetchEvents();
   }, []);
 
+  const formatDate = (date) => {
+    return new Date(date).toISOString().split('T')[0];
+  };
+
   const fetchEvents = async () => {
     try {
       const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events?limit=7'); //axios.get 호출의 URL에 ?limit=7 쿼리 파라미터를 추가하여 가져오는 이벤트 수를 7개로 제한
@@ -27,11 +31,11 @@ const FullCalendarPage = () => {
       console.log(response.data);
 
       const formattedEvents = response.data.map(event => ({
-        id: event._id, // MongoDB의 _id를 id로 변환
+        id: event._id,
         title: event.title,
         description: event.description,
-        start: event.start,
-        end: event.end,
+        start: formatDate(event.start),
+        end: formatDate(event.end),
         backgroundColor: event.backgroundColor,
         label: event.label,
         completed: event.completed,
@@ -73,8 +77,8 @@ const FullCalendarPage = () => {
     setNewEvent({
       title: clickInfo.event.title,
       description: clickInfo.event.extendedProps.description,
-      start: clickInfo.event.startStr,
-      end: clickInfo.event.endStr ? clickInfo.event.endStr : clickInfo.event.startStr, // 끝나는 날짜가 설정되도록 수정
+      start: formatDate(clickInfo.event.start),
+      end: formatDate(clickInfo.event.end),
       backgroundColor: clickInfo.event.backgroundColor,
       label: clickInfo.event.extendedProps.label,
       completed: clickInfo.event.extendedProps.completed || false
@@ -91,10 +95,12 @@ const FullCalendarPage = () => {
     try {
       const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', {
         ...newEvent,
+        start: formatDate(newEvent.start),
+        end: formatDate(newEvent.end),
       });
-      setEvents([...events, { id: response.data._id, ...response.data }]); // 새로 추가된 이벤트의 _id를 id로 변환
+      setEvents([...events, { id: response.data._id, ...response.data }]);
       setShowModal(false);
-      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false }); 
+      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
     } catch (error) {
       console.error('Error adding event:', error);
     }
@@ -108,8 +114,16 @@ const FullCalendarPage = () => {
     try {
       const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, {
         ...newEvent,
+        start: formatDate(newEvent.start),
+        end: formatDate(newEvent.end),
       });
-      setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data } : event));
+      
+      setEvents(events.map(event => 
+        event.id === selectedEvent.id 
+          ? { id: response.data._id, ...response.data } 
+          : event
+      ));
+      
       setShowModal(false);
       setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
       setSelectedEvent(null);
@@ -134,8 +148,8 @@ const FullCalendarPage = () => {
     const updatedEvent = {
       id: changeInfo.event.id,
       title: changeInfo.event.title,
-      start: changeInfo.event.startStr, 
-      end: changeInfo.event.endStr,
+      start: formatDate(changeInfo.event.start),
+      end: formatDate(changeInfo.event.end),
       backgroundColor: changeInfo.event.backgroundColor,
       label: changeInfo.event.extendedProps.label,
       completed: changeInfo.event.extendedProps.completed || false,

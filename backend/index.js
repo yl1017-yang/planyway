@@ -18,7 +18,7 @@ app.use(cors({
 app.use(bodyParser.json());
 
 // const uri = "mongodb+srv://yangwonder1017:0KffJ8dB5DIWmZeP@cluster-planyway.dou1w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-planyway";
-const uri = "mongodb+srv://yangwonder1017:0KffJ8dB5DIWmZeP@cluster-planyway.dou1w.mongodb.net/planyway?retryWrites=true&w=majority";
+const uri = process.env.MONGODB_URI || "mongodb+srv://yangwonder1017:0KffJ8dB5DIWmZeP@cluster-planyway.dou1w.mongodb.net/planyway?retryWrites=true&w=majority";
 mongoose.connect(uri)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log('MongoDB connection error:', err));
@@ -27,12 +27,19 @@ mongoose.connect(uri)
 const eventSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: String,
-  start: { type: String, required: true },
-  end: { type: String, required: true },
+  start: { 
+    type: String, 
+    required: true,
+    set: date => new Date(date).toISOString().split('T')[0] // 'YYYY-MM-DD' 형식으로 저장
+  },
+  end: { 
+    type: String, 
+    required: true,
+    set: date => new Date(date).toISOString().split('T')[0] // 'YYYY-MM-DD' 형식으로 저장
+  },
   backgroundColor: String,
   label: String,
   completed: Boolean,
-  // allDay: { type: Boolean, default: true }
 });
 
 const Event = mongoose.model('Event', eventSchema);
