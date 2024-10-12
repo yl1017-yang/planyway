@@ -37,36 +37,19 @@ const eventSchema = new mongoose.Schema({
 
 const Event = mongoose.model('Event', eventSchema);
 
-// GET 라우트 수정 (종료 날짜를 다시 원래대로 조정)
+// Routes
 app.get('/events', async (req, res) => {
-  const limit = parseInt(req.query.limit) || 300;
+  const limit = parseInt(req.query.limit) || 300; // 쿼리 파라미터에서 limit 값을 가져오고, 기본값은 300으로 설정
   try {
-    const events = await Event.find().limit(limit);
-    const adjustedEvents = events.map(event => ({
-      ...event.toObject(),
-      end: event.end ? new Date(new Date(event.end).setDate(new Date(event.end).getDate() - 1)).toISOString().split('T')[0] : null
-    }));
-    res.json(adjustedEvents);
+    const events = await Event.find().limit(limit); // limit을 사용하여 가져오는 이벤트 수를 제한
+    res.json(events);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-// 날짜를 조정하는 유틸리티 함수
-function adjustDate(dateString) {
-  if (!dateString) return dateString;
-  const date = new Date(dateString);
-  date.setDate(date.getDate() + 1);
-  return date.toISOString().split('T')[0];
-}
-
-// POST 라우트 수정
 app.post('/events', async (req, res) => {
-  const eventData = {
-    ...req.body,
-    end: adjustDate(req.body.end)
-  };
-  const event = new Event(eventData);
+  const event = new Event(req.body);
   try {
     const newEvent = await event.save();
     res.status(201).json(newEvent);
@@ -75,14 +58,9 @@ app.post('/events', async (req, res) => {
   }
 });
 
-// PUT 라우트 수정
 app.put('/events/:id', async (req, res) => {
   try {
-    const eventData = {
-      ...req.body,
-      end: adjustDate(req.body.end)
-    };
-    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, eventData, { new: true });
+    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedEvent) {
       return res.status(404).json({ message: 'Event not found' });
     }

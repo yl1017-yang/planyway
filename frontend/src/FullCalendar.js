@@ -21,17 +21,17 @@ const FullCalendarPage = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events?limit=7');
-  
+      const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events?limit=7'); //axios.get 호출의 URL에 ?limit=7 쿼리 파라미터를 추가하여 가져오는 이벤트 수를 7개로 제한
+
       console.log(response);
       console.log(response.data);
-  
+
       const formattedEvents = response.data.map(event => ({
-        id: event._id,
+        id: event._id, // MongoDB의 _id를 id로 변환
         title: event.title,
         description: event.description,
         start: event.start,
-        end: adjustEndDate(event.end),
+        end: event.end,
         backgroundColor: event.backgroundColor,
         label: event.label,
         completed: event.completed,
@@ -40,14 +40,6 @@ const FullCalendarPage = () => {
     } catch (error) {
       console.error('Error fetching events:', error);
     }
-  };
-  
-  // 종료 날짜를 하루 뒤로 조정하는 함수
-  const adjustEndDate = (endDate) => {
-    if (!endDate) return null;
-    const date = new Date(endDate);
-    date.setDate(date.getDate() + 1);
-    return date.toISOString().split('T')[0];
   };
 
   const onDateClick = (arg) => {
@@ -97,12 +89,10 @@ const FullCalendarPage = () => {
       return;
     }
     try {
-      const eventToAdd = {
+      const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', {
         ...newEvent,
-        end: adjustEndDate(newEvent.end),
-      };
-      const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', eventToAdd);
-      setEvents([...events, { id: response.data._id, ...response.data }]);
+      });
+      setEvents([...events, { id: response.data._id, ...response.data }]); // 새로 추가된 이벤트의 _id를 id로 변환
       setShowModal(false);
       setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false }); 
     } catch (error) {
@@ -116,11 +106,9 @@ const FullCalendarPage = () => {
       return;
     }
     try {
-      const eventToUpdate = {
+      const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, {
         ...newEvent,
-        end: adjustEndDate(newEvent.end),
-      };
-      const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, eventToUpdate);
+      });
       setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data } : event));
       setShowModal(false);
       setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
@@ -147,12 +135,12 @@ const FullCalendarPage = () => {
       id: changeInfo.event.id,
       title: changeInfo.event.title,
       start: changeInfo.event.startStr, 
-      end: adjustEndDate(changeInfo.event.endStr),
+      end: changeInfo.event.endStr,
       backgroundColor: changeInfo.event.backgroundColor,
       label: changeInfo.event.extendedProps.label,
       completed: changeInfo.event.extendedProps.completed || false,
     };
-  
+
     try {
       await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${updatedEvent.id}`, updatedEvent);
       setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
@@ -166,12 +154,12 @@ const FullCalendarPage = () => {
       id: info.event.id,
       title: info.event.title,
       start: info.event.startStr,
-      end: adjustEndDate(info.event.endStr),
+      end: info.event.endStr,
       backgroundColor: info.event.backgroundColor,
       label: info.event.extendedProps.label,
       completed: info.event.extendedProps.completed || false,
     };
-  
+
     try {
       await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${updatedEvent.id}`, updatedEvent);
       setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
@@ -269,7 +257,6 @@ const FullCalendarPage = () => {
         // navLinkHint={"클릭시 해당 날짜로 이동합니다."} // 날짜에 호버시 힌트 문구
         eventResizableFromStart={true}        
         dayCellContent={dayCellContent}
-        eventDisplay="block"
       />
 
       {showModal && (
