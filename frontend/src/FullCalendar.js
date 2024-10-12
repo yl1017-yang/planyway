@@ -7,8 +7,9 @@ import axios from 'axios';
 
 import "./FullCalendar.css";
 
-const FullCalendarPage = () => {
+const BASE_URL = 'https://wet-luisa-yang-yang-253f1741.koyeb.app/events'; // 공통 경로 정의
 
+const FullCalendarPage = () => {
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -21,7 +22,7 @@ const FullCalendarPage = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events?limit=7'); //axios.get 호출의 URL에 ?limit=7 쿼리 파라미터를 추가하여 가져오는 이벤트 수를 7개로 제한
+      const response = await axios.get(`${BASE_URL}?limit=7`); //axios.get 호출의 URL에 ?limit=7 쿼리 파라미터를 추가하여 가져오는 이벤트 수를 7개로 제한
 
       console.log(response);
       console.log(response.data);
@@ -89,7 +90,7 @@ const FullCalendarPage = () => {
       return;
     }
     try {
-      const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', {
+      const response = await axios.post(BASE_URL, {
         ...newEvent,
       });
       setEvents([...events, { id: response.data._id, ...response.data }]); // 새로 추가된 이벤트의 _id를 id로 변환
@@ -106,7 +107,7 @@ const FullCalendarPage = () => {
       return;
     }
     try {
-      const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, {
+      const response = await axios.put(`${BASE_URL}/${selectedEvent.id}`, {
         ...newEvent,
       });
       setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data } : event));
@@ -120,7 +121,7 @@ const FullCalendarPage = () => {
 
   const handleDeleteEvent = async () => {
     try {
-      await axios.delete(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`);
+      await axios.delete(`${BASE_URL}/${selectedEvent.id}`);
       setEvents(events.filter(event => event.id !== selectedEvent.id));
       setShowModal(false);
       setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
@@ -142,7 +143,7 @@ const FullCalendarPage = () => {
     };
 
     try {
-      await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${updatedEvent.id}`, updatedEvent);
+      await axios.put(`${BASE_URL}/${updatedEvent.id}`, updatedEvent);
       setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
     } catch (error) {
       console.error('Error updating event:', error);
@@ -161,7 +162,7 @@ const FullCalendarPage = () => {
     };
 
     try {
-      await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${updatedEvent.id}`, updatedEvent);
+      await axios.put(`${BASE_URL}/${updatedEvent.id}`, updatedEvent);
       setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
     } catch (error) {
       console.error('Error updating event:', error);
