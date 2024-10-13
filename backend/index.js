@@ -28,7 +28,7 @@ const eventSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: String,
   start: { type: String, required: true },
-  end: { type: String, required: true },
+  end: { type: String, required: true }, // 종료 날짜는 그대로 유지
   backgroundColor: String,
   label: String,
   completed: Boolean,
@@ -51,12 +51,12 @@ app.get('/events', async (req, res) => {
 app.post('/events', async (req, res) => {
   const event = new Event(req.body);
   try {
-    const newEvent = await event.save();
-    res.status(201).json(newEvent);
+      const newEvent = await event.save();
+      res.status(201).json(newEvent);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+      res.status(400).json({ message: err.message });
   }
-});
+})
 
 app.put('/events/:id', async (req, res) => {
   try {

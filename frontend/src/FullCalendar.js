@@ -89,14 +89,17 @@ const FullCalendarPage = () => {
       return;
     }
     try {
+      const adjustedEndDate = new Date(newEvent.end);
+      adjustedEndDate.setDate(adjustedEndDate.getDate() + 1); // 종료 날짜를 하루 더 조정
       const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', {
-        ...newEvent,
+          ...newEvent,
+          end: adjustedEndDate.toISOString().split('T')[0] // ISO 문자열로 변환 및 포맷
       });
-      setEvents([...events, { id: response.data._id, ...response.data }]); // 새로 추가된 이벤트의 _id를 id로 변환
+      setEvents([...events, { id: response.data._id, ...response.data }]);
       setShowModal(false);
-      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false }); 
+      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
     } catch (error) {
-      console.error('Error adding event:', error);
+        console.error('Error adding event:', error);
     }
   };
 
@@ -106,8 +109,11 @@ const FullCalendarPage = () => {
       return;
     }
     try {
+      const adjustedEndDate = new Date(newEvent.end);
+      adjustedEndDate.setDate(adjustedEndDate.getDate() + 1); // 종료 날짜를 하루 더 조정
       const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, {
-        ...newEvent,
+          ...newEvent,
+          end: adjustedEndDate.toISOString().split('T')[0] // ISO 문자열로 변환 및 포맷
       });
       setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data } : event));
       setShowModal(false);
@@ -174,10 +180,13 @@ const FullCalendarPage = () => {
 
   const eventContent = (eventInfo) => {
     const isCompleted = eventInfo.event.extendedProps.completed;
+    const endDate = new Date(eventInfo.event.end); // 종료 날짜 가져오기
+    endDate.setDate(endDate.getDate() - 1); // 종료 날짜를 하루 빼기
     return (
       <div style={{ textDecoration: isCompleted ? 'line-through' : 'none' }}>
         [{eventInfo.event.extendedProps.label}] 
         {eventInfo.event.title} 
+        {` (${endDate.toISOString().split('T')[0]})`} {/* 종료 날짜 표시 */}
       </div>
     );
   };
@@ -257,6 +266,8 @@ const FullCalendarPage = () => {
         // navLinkHint={"클릭시 해당 날짜로 이동합니다."} // 날짜에 호버시 힌트 문구
         eventResizableFromStart={true}        
         dayCellContent={dayCellContent}
+        eventDisplay="block"
+        displayEventEnd={true}
       />
 
       {showModal && (
