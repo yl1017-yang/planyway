@@ -32,7 +32,7 @@ const eventSchema = new mongoose.Schema({
   backgroundColor: String,
   label: String,
   completed: { type: Boolean, default: false }, 
-  // allDay: { type: Boolean, default: true }
+  allDay: { type: Boolean, default: true } // allDay 필드 추가
 });
 
 const Event = mongoose.model('Event', eventSchema);
@@ -76,7 +76,7 @@ app.delete('/events/:id', async (req, res) => {
     if (!deletedEvent) {
       return res.status(404).json({ message: 'Event not found' });
     }
-    res.json({ message: 'Event deleted' });
+    res.json({ message: 'Event deleted', allDay: deletedEvent.allDay }); // 삭제된 이벤트의 allDay 정보 포함
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
