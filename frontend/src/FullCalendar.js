@@ -7,14 +7,13 @@ import axios from 'axios';
 
 import "./FullCalendar.css";
 
-const BASE_URL = 'https://wet-luisa-yang-yang-253f1741.koyeb.app/events'; // 공통 경로 정의
-
 const FullCalendarPage = () => {
+
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [newEvent, setNewEvent] = useState({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false,  allDay: true });
+  const [newEvent, setNewEvent] = useState({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
 
   useEffect(() => {
     fetchEvents();
@@ -22,7 +21,7 @@ const FullCalendarPage = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}?limit=7`); //axios.get 호출의 URL에 ?limit=7 쿼리 파라미터를 추가하여 가져오는 이벤트 수를 7개로 제한
+      const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events?limit=7'); //axios.get 호출의 URL에 ?limit=7 쿼리 파라미터를 추가하여 가져오는 이벤트 수를 7개로 제한
 
       console.log(response);
       console.log(response.data);
@@ -90,14 +89,14 @@ const FullCalendarPage = () => {
       return;
     }
     try {
-      const response = await axios.post(BASE_URL, {
+      const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', {
         ...newEvent,
       });
       setEvents([...events, { id: response.data._id, ...response.data }]); // 새로 추가된 이벤트의 _id를 id로 변환
       setShowModal(false);
-      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false, allDay: true }); 
+      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false }); 
     } catch (error) {
-      console.error('이벤트 추가 중 오류 발생:', error);
+      console.error('Error adding event:', error);
     }
   };
 
@@ -107,27 +106,27 @@ const FullCalendarPage = () => {
       return;
     }
     try {
-      const response = await axios.put(`${BASE_URL}/${selectedEvent.id}`, {
+      const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, {
         ...newEvent,
       });
-      setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data, allDay: newEvent.allDay } : event)); // allDay 정보 포함
+      setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data } : event));
       setShowModal(false);
-      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false, allDay: true });
+      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
       setSelectedEvent(null);
     } catch (error) {
-      console.error('이벤트 수정 중 오류 발생:', error);
+      console.error('Error editing event:', error);
     }
   };
 
   const handleDeleteEvent = async () => {
     try {
-      await axios.delete(`${BASE_URL}/${selectedEvent.id}`);
+      await axios.delete(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`);
       setEvents(events.filter(event => event.id !== selectedEvent.id));
-      // setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
       setShowModal(false);
+      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
       setSelectedEvent(null);
     } catch (error) {
-      console.error('이벤트 삭제 중 오류 발생:', error);
+      console.error('Error deleting event:', error);
     }
   };
 
@@ -143,7 +142,7 @@ const FullCalendarPage = () => {
     };
 
     try {
-      await axios.put(`${BASE_URL}/${updatedEvent.id}`, updatedEvent);
+      await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${updatedEvent.id}`, updatedEvent);
       setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
     } catch (error) {
       console.error('Error updating event:', error);
@@ -162,7 +161,7 @@ const FullCalendarPage = () => {
     };
 
     try {
-      await axios.put(`${BASE_URL}/${updatedEvent.id}`, updatedEvent);
+      await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${updatedEvent.id}`, updatedEvent);
       setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
     } catch (error) {
       console.error('Error updating event:', error);
@@ -171,11 +170,6 @@ const FullCalendarPage = () => {
 
   const handleCompletedChange = (e) => {
     setNewEvent({ ...newEvent, completed: e.target.checked });
-  };
-
-  // 추가: allDay 체크박스 추가
-  const handleAllDayChange = (e) => {
-    setNewEvent({ ...newEvent, allDay: e.target.checked });
   };
 
   const eventContent = (eventInfo) => {
@@ -282,10 +276,6 @@ const FullCalendarPage = () => {
               <input type="date" name="start" value={newEvent.start} onChange={handleInputChange} />
               ~
               <input type="date" name="end" value={newEvent.end} onChange={handleInputChange} />
-            </label>
-            <label>
-              <span>하루종일</span>
-              <input type="checkbox" name="allDay" checked={newEvent.allDay} onChange={handleAllDayChange} />
             </label>
             <label>
               <span>라벨</span>
