@@ -259,6 +259,8 @@ const FullCalendarPage = () => {
         dayCellContent={dayCellContent}
         eventDisplay="block"
         displayEventEnd={true}
+        eventAdd={handleAddEvent} // 이벤트 추가 핸들러
+        eventRemove={handleDeleteEvent} // 이벤트 삭제 핸들러   
       />
 
       {showModal && (

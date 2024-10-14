@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const moment = require('moment-timezone');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -25,12 +26,11 @@ mongoose.connect(uri)
 const eventSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: String,
-  start: { type: String, required: true },
-  end: { type: String, required: true },
+  start: { type: Date, required: true },
+  end: { type: Date, required: true },
   backgroundColor: String,
   label: String,
   completed: Boolean,
-  allDay: { type: Boolean, default: true }
 });
 
 const Event = mongoose.model('Event', eventSchema);
@@ -39,17 +39,31 @@ app.get('/events', async (req, res) => {
   const limit = parseInt(req.query.limit) || 300;
   try {
     const events = await Event.find().limit(limit);
-    res.json(events);
+    const formattedEvents = events.map(event => ({
+      ...event.toObject(),
+      start: moment(event.start).utc().format(),
+      end: moment(event.end).utc().format(),
+    }));
+    res.json(formattedEvents);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
 app.post('/events', async (req, res) => {
-  const event = new Event(req.body);
+  const eventData = {
+    ...req.body,
+    start: moment.utc(req.body.start).toDate(),
+    end: moment.utc(req.body.end).toDate(),
+  };
+  const event = new Event(eventData);
   try {
     const newEvent = await event.save();
-    res.status(201).json(newEvent);
+    res.status(201).json({
+      ...newEvent.toObject(),
+      start: moment(newEvent.start).utc().format(),
+      end: moment(newEvent.end).utc().format(),
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -57,11 +71,20 @@ app.post('/events', async (req, res) => {
 
 app.put('/events/:id', async (req, res) => {
   try {
-    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const eventData = {
+      ...req.body,
+      start: moment.utc(req.body.start).toDate(),
+      end: moment.utc(req.body.end).toDate(),
+    };
+    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, eventData, { new: true });
     if (!updatedEvent) {
       return res.status(404).json({ message: 'Event not found' });
     }
-    res.json(updatedEvent);
+    res.json({
+      ...updatedEvent.toObject(),
+      start: moment(updatedEvent.start).utc().format(),
+      end: moment(updatedEvent.end).utc().format(),
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
