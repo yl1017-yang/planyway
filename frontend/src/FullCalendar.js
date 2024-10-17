@@ -55,7 +55,8 @@ const FullCalendarPage = () => {
       title: '', 
       description: '', 
       start: formatDateTimeLocal(arg.date), 
-      end: formatDateTimeLocal(endDate), 
+      end: formatDateTimeLocal(arg.date), 
+      // end: formatDateTimeLocal(endDate), 1시간 추가
       backgroundColor: '', 
       label: '', 
       completed: false, 
