@@ -50,12 +50,13 @@ const FullCalendarPage = () => {
 
   const onDateClick = (arg) => {
     const endDate = new Date(arg.date);
-    endDate.setHours(endDate.getHours() + 1);
+    endDate.setHours(endDate.getHours() + 11);
     setNewEvent({ 
       title: '', 
       description: '', 
       start: formatDateTimeLocal(arg.date), 
-      end: formatDateTimeLocal(endDate), 
+      end: formatDateTimeLocal(arg.date), 
+      // end: formatDateTimeLocal(endDate),
       backgroundColor: '', 
       label: '', 
       completed: false, 
