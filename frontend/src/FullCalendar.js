@@ -49,14 +49,11 @@ const FullCalendarPage = () => {
   };
 
   const onDateClick = (arg) => {
-    const endDate = new Date(arg.date);
-    endDate.setHours(endDate.getHours() + 1);
     setNewEvent({ 
       title: '', 
       description: '', 
       start: formatDateTimeLocal(arg.date), 
       end: formatDateTimeLocal(arg.date), 
-      // end: formatDateTimeLocal(endDate), 1시간 추가
       backgroundColor: '', 
       label: '', 
       completed: false, 
