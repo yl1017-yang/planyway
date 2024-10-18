@@ -275,9 +275,10 @@ const FullCalendarPage = () => {
             </label>
             <label>
               <span>날짜</span>
-              <input type="datetime-local" name="start" value={newEvent.start} onChange={handleInputChange} />
+              <input type="date" name="start" value={newEvent.start} onChange={handleInputChange} />
               ~
-              <input type="datetime-local" name="end" value={newEvent.end} onChange={handleInputChange} />
+              <input type="date" name="end" value={newEvent.end} onChange={handleInputChange} />
+              {/* datetime-local */}
             </label>
             <label>
               <span>라벨</span>
