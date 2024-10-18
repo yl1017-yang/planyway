@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const momentTimezone = require('moment-timezone');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -26,12 +25,12 @@ mongoose.connect(uri)
 const eventSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: String,
-  start: { type: Date, required: true },
-  end: { type: Date, required: true },
+  start: { type: String, required: true },
+  end: { type: String, required: true },
   backgroundColor: String,
   label: String,
   completed: Boolean,
-  allDay: { type: Boolean, default: false }
+  allDay: { type: Boolean, default: true }
 });
 
 const Event = mongoose.model('Event', eventSchema);
@@ -40,30 +39,17 @@ app.get('/events', async (req, res) => {
   const limit = parseInt(req.query.limit) || 300;
   try {
     const events = await Event.find().limit(limit);
-    res.json(events.map(event => ({
-      ...event.toObject(),
-      start: momentTimezone(event.start).tz('Asia/Seoul').format(),
-      end: momentTimezone(event.end).tz('Asia/Seoul').format()
-    })));
+    res.json(events);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
 app.post('/events', async (req, res) => {
-  const eventData = {
-    ...req.body,
-    start: momentTimezone.tz(req.body.start, 'Asia/Seoul').utc().toDate(),
-    end: momentTimezone.tz(req.body.end, 'Asia/Seoul').utc().toDate()
-  };
-  const event = new Event(eventData);
+  const event = new Event(req.body);
   try {
     const newEvent = await event.save();
-    res.status(201).json({
-      ...newEvent.toObject(),
-      start: momentTimezone(newEvent.start).tz('Asia/Seoul').format(),
-      end: momentTimezone(newEvent.end).tz('Asia/Seoul').format()
-    });
+    res.status(201).json(newEvent);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -71,20 +57,11 @@ app.post('/events', async (req, res) => {
 
 app.put('/events/:id', async (req, res) => {
   try {
-    const eventData = {
-      ...req.body,
-      start: momentTimezone.tz(req.body.start, 'Asia/Seoul').utc().toDate(),
-      end: momentTimezone.tz(req.body.end, 'Asia/Seoul').utc().toDate()
-    };
-    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, eventData, { new: true });
+    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedEvent) {
       return res.status(404).json({ message: 'Event not found' });
     }
-    res.json({
-      ...updatedEvent.toObject(),
-      start: momentTimezone(updatedEvent.start).tz('Asia/Seoul').format(),
-      end: momentTimezone(updatedEvent.end).tz('Asia/Seoul').format()
-    });
+    res.json(updatedEvent);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
