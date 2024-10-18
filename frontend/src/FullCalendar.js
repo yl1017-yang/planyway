@@ -4,6 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from "@fullcalendar/interaction"; 
 import axios from 'axios';
+import moment from 'moment-timezone';
 
 import "./FullCalendar.css";
 
@@ -21,8 +22,7 @@ const FullCalendarPage = () => {
 
   const formatDateTimeLocal = (dateString) => {
     if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toISOString().slice(0, 16);
+    return moment(dateString).tz('Asia/Seoul').format('YYYY-MM-DDTHH:mm');
   };
 
   const fetchEvents = async () => {
@@ -49,13 +49,13 @@ const FullCalendarPage = () => {
   };
 
   const onDateClick = (arg) => {
-    const endDate = new Date(arg.date);
-    endDate.setHours(endDate.getHours() + 1);
+    const start = moment(arg.date).tz('Asia/Seoul');
+    const end = start.clone().add(1, 'hour');
     setNewEvent({ 
       title: '', 
       description: '', 
-      start: arg.date.toISOString(), 
-      end: endDate.toISOString(), 
+      start: start.format(), 
+      end: end.format(), 
       backgroundColor: '', 
       label: '', 
       completed: false, 
@@ -71,14 +71,12 @@ const FullCalendarPage = () => {
 
     if (name === 'allDay' && !checked) {
       setNewEvent(prev => {
-        const start = new Date(prev.start);
-        const end = new Date(prev.end);
-        start.setHours(12, 0, 0);
-        end.setHours(13, 0, 0);
+        const start = moment(prev.start).tz('Asia/Seoul').hour(12).minute(0).second(0);
+        const end = start.clone().add(1, 'hour');
         return {
           ...prev,
-          start: start.toISOString(),
-          end: end.toISOString()
+          start: start.format(),
+          end: end.format()
         };
       });
     }
@@ -104,8 +102,8 @@ const FullCalendarPage = () => {
     setNewEvent({
       title: clickInfo.event.title,
       description: clickInfo.event.extendedProps.description,
-      start: clickInfo.event.start.toISOString(),
-      end: (clickInfo.event.end || clickInfo.event.start).toISOString(),
+      start: moment(clickInfo.event.start).tz('Asia/Seoul').format(),
+      end: moment(clickInfo.event.end || clickInfo.event.start).tz('Asia/Seoul').format(),
       backgroundColor: clickInfo.event.backgroundColor,
       label: clickInfo.event.extendedProps.label,
       completed: clickInfo.event.extendedProps.completed || false,
@@ -232,6 +230,7 @@ const FullCalendarPage = () => {
       <FullCalendar
         plugins={plugin}
         initialView="dayGridMonth"
+        
         height="100vh"
         locale={'ko'}
         timeZone="Asia/Seoul"
@@ -270,7 +269,7 @@ const FullCalendarPage = () => {
         eventContent={eventContent}
         editable={true}
         eventDrop={handleEventDrop}
-
+        
         selectable={true}
         droppable={true}
         selectMirror={true}
