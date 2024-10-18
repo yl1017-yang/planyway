@@ -207,9 +207,7 @@ const FullCalendarPage = () => {
         events={events}
         height="100vh"
         locale={'ko'}
-        // timeZone="Asia/Seoul"
-        timeZone="UTC"
-        // allDay={true}
+        timeZone="Asia/Seoul"
         weekends={true}
         headerToolbar={{
           left: 'prevYear,prev,next,nextYear today',
@@ -277,9 +275,9 @@ const FullCalendarPage = () => {
             </label>
             <label>
               <span>날짜</span>
-              <input type="date" name="start" value={newEvent.start} onChange={handleInputChange} />
+              <input type="datetime-local" name="start" value={newEvent.start} onChange={handleInputChange} />
               ~
-              <input type="date" name="end" value={newEvent.end} onChange={handleInputChange} />
+              <input type="datetime-local" name="end" value={newEvent.end} onChange={handleInputChange} />
             </label>
             <label>
               <span>라벨</span>
