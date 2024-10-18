@@ -66,7 +66,15 @@ const FullCalendarPage = () => {
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setNewEvent({ ...newEvent, [name]: type === 'checkbox' ? checked : value });
-  };
+
+    if (name === 'allDay' && !checked) {
+        setNewEvent(prev => ({
+            ...prev,
+            start: formatDateTimeLocal(new Date(prev.start).setHours(12)),
+            end: formatDateTimeLocal(new Date(prev.end).setHours(12))
+        }));
+    }
+};
 
   const handleLabelChange = (e) => {
     const { value } = e.target;
