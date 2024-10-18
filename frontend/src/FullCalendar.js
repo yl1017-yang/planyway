@@ -49,15 +49,17 @@ const FullCalendarPage = () => {
   };
 
   const onDateClick = (arg) => {
+    const endDate = new Date(arg.date);
+    endDate.setHours(endDate.getHours() + 1);
     setNewEvent({ 
       title: '', 
       description: '', 
-      start: formatDateTimeLocal(arg.date), 
-      end: formatDateTimeLocal(arg.date), 
+      start: arg.date.toISOString(), 
+      end: endDate.toISOString(), 
       backgroundColor: '', 
       label: '', 
       completed: false, 
-      allDay: arg.allDay 
+      allDay: arg.allDay,
     });
     setIsEditing(false);
     setShowModal(true);
@@ -68,13 +70,19 @@ const FullCalendarPage = () => {
     setNewEvent({ ...newEvent, [name]: type === 'checkbox' ? checked : value });
 
     if (name === 'allDay' && !checked) {
-        setNewEvent(prev => ({
-            ...prev,
-            start: formatDateTimeLocal(new Date(prev.start).setHours(12)),
-            end: formatDateTimeLocal(new Date(prev.end).setHours(12))
-        }));
+      setNewEvent(prev => {
+        const start = new Date(prev.start);
+        const end = new Date(prev.end);
+        start.setHours(12, 0, 0);
+        end.setHours(13, 0, 0);
+        return {
+          ...prev,
+          start: start.toISOString(),
+          end: end.toISOString()
+        };
+      });
     }
-};
+  };
 
   const handleLabelChange = (e) => {
     const { value } = e.target;
@@ -96,8 +104,8 @@ const FullCalendarPage = () => {
     setNewEvent({
       title: clickInfo.event.title,
       description: clickInfo.event.extendedProps.description,
-      start: formatDateTimeLocal(clickInfo.event.start),
-      end: formatDateTimeLocal(clickInfo.event.end || clickInfo.event.start),
+      start: clickInfo.event.start.toISOString(),
+      end: (clickInfo.event.end || clickInfo.event.start).toISOString(),
       backgroundColor: clickInfo.event.backgroundColor,
       label: clickInfo.event.extendedProps.label,
       completed: clickInfo.event.extendedProps.completed || false,
@@ -224,7 +232,6 @@ const FullCalendarPage = () => {
       <FullCalendar
         plugins={plugin}
         initialView="dayGridMonth"
-        events={events}
         height="100vh"
         locale={'ko'}
         timeZone="Asia/Seoul"
@@ -255,12 +262,15 @@ const FullCalendarPage = () => {
         eventColor="rgba(0, 0, 0, 0.8)"
         eventTextColor="rgba(0, 0, 0, 0.8)"
         eventBackgroundColor="#e6f6e3"
+
+        events={events}
         dateClick={onDateClick}
         eventClick={handleEventClick}
         eventChange={handleEventChange}
         eventContent={eventContent}
         editable={true}
         eventDrop={handleEventDrop}
+
         selectable={true}
         droppable={true}
         selectMirror={true}
@@ -290,11 +300,11 @@ const FullCalendarPage = () => {
             </label>
             <label>
               <span>시작</span>
-              <input type="datetime-local" name="start" value={newEvent.start} onChange={handleInputChange} />
+              <input type="datetime-local" name="start" value={formatDateTimeLocal(newEvent.start)} onChange={handleInputChange} />
             </label>
             <label>
               <span>종료</span>
-              <input type="datetime-local" name="end" value={newEvent.end} onChange={handleInputChange} />
+              <input type="datetime-local" name="end" value={formatDateTimeLocal(newEvent.end)} onChange={handleInputChange} />
             </label>
             <label>
               <span>종일</span>

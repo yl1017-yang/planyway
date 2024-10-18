@@ -25,8 +25,8 @@ mongoose.connect(uri)
 const eventSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: String,
-  start: { type: String, required: true },
-  end: { type: String, required: true },
+  start: { type: Date, required: true },
+  end: { type: Date, required: true },
   backgroundColor: String,
   label: String,
   completed: Boolean,
@@ -39,17 +39,30 @@ app.get('/events', async (req, res) => {
   const limit = parseInt(req.query.limit) || 300;
   try {
     const events = await Event.find().limit(limit);
-    res.json(events);
+    res.json(events.map(event => ({
+      ...event.toObject(),
+      start: event.start.toISOString(),
+      end: event.end.toISOString()
+    })));
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
 app.post('/events', async (req, res) => {
-  const event = new Event(req.body);
+  const eventData = {
+    ...req.body,
+    start: new Date(req.body.start),
+    end: new Date(req.body.end)
+  };
+  const event = new Event(eventData);
   try {
     const newEvent = await event.save();
-    res.status(201).json(newEvent);
+    res.status(201).json({
+      ...newEvent.toObject(),
+      start: newEvent.start.toISOString(),
+      end: newEvent.end.toISOString()
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -57,11 +70,20 @@ app.post('/events', async (req, res) => {
 
 app.put('/events/:id', async (req, res) => {
   try {
-    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const eventData = {
+      ...req.body,
+      start: new Date(req.body.start),
+      end: new Date(req.body.end)
+    };
+    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, eventData, { new: true });
     if (!updatedEvent) {
       return res.status(404).json({ message: 'Event not found' });
     }
-    res.json(updatedEvent);
+    res.json({
+      ...updatedEvent.toObject(),
+      start: updatedEvent.start.toISOString(),
+      end: updatedEvent.end.toISOString()
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
