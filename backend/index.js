@@ -39,14 +39,23 @@ app.get('/events', async (req, res) => {
   const limit = parseInt(req.query.limit) || 300;
   try {
     const events = await Event.find().limit(limit);
-    res.json(events);
+    const formattedEvents = events.map(event => ({
+      ...event.toObject(),
+      start: new Date(event.start).toISOString(),
+      end: new Date(event.end).toISOString()
+    }));
+    res.json(formattedEvents);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
 app.post('/events', async (req, res) => {
-  const event = new Event(req.body);
+  const event = new Event({
+    ...req.body,
+    start: new Date(req.body.start).toISOString(),
+    end: new Date(req.body.end).toISOString()
+  });
   try {
     const newEvent = await event.save();
     res.status(201).json(newEvent);
@@ -57,7 +66,15 @@ app.post('/events', async (req, res) => {
 
 app.put('/events/:id', async (req, res) => {
   try {
-    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedEvent = await Event.findByIdAndUpdate(
+      req.params.id, 
+      {
+        ...req.body,
+        start: new Date(req.body.start).toISOString(),
+        end: new Date(req.body.end).toISOString()
+      },
+      { new: true }
+    );
     if (!updatedEvent) {
       return res.status(404).json({ message: 'Event not found' });
     }
