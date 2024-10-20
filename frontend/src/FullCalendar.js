@@ -119,6 +119,10 @@ const FullCalendarPage = () => {
   };
 
   const handleDeleteEvent = async () => {
+    if (!selectedEvent) {
+      alert('삭제할 이벤트를 선택해주세요.');
+      return;
+    }
     try {
       await axios.delete(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`);
       setEvents(events.filter(event => event.id !== selectedEvent.id));
