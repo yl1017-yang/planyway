@@ -249,27 +249,14 @@ const FullCalendarPage = () => {
     return dayCellInfo.dayNumberText.replace('일', '');
   };
 
-  const plugin = [
-    dayGridPlugin, // 월간 달력 // day 그리드
-    timeGridPlugin, // 주간, 일간 달력 // time 그리드 보기
-    interactionPlugin
-    /* 이벤트를 위한 플러그인
-    일정 추가/수정 : 캘린더에 새 이벤트를 추가하거나 기존 이벤트를 수정 
-      : 이벤트를 클릭하면 이벤트 정보를 수정하는 팝업이나 모달 띄움
-    드래그 앤 드롭 : 마우스로 드래그하여 다른 날짜나 시간으로 이동
-    리사이징 : 기간을 변경하여 이벤트의 기간을 늘이거나 줄임
-    일정 클릭 이벤트
-    */
-  ];
-
   return (
     <div>
       <FullCalendar
-        plugins={plugin}
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         events={events}
         height="100vh"
-        locale={'ko'}
+        locale="ko"
         timeZone="Asia/Seoul"
         // timeZone="UTC"
         // allDay={true}
