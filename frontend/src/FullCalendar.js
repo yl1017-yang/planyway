@@ -117,7 +117,7 @@ const FullCalendarPage = () => {
       return;
     }
     try {
-      // 날짜를 ISO 8601 형식으로 변환
+      // KST에서 UTC로 변환하여 서버에 전송
       const eventData = {
         ...newEvent,
         start: moment.tz(`${newEvent.start} 00:00:00`, 'Asia/Seoul').utc().toISOString(),

@@ -59,8 +59,8 @@ app.get('/events', async (req, res) => {
     // ISO 8601 형식으로 응답
     const formattedEvents = events.map(event => ({
       ...event.toObject(),
-      start: moment(event.start).tz('Asia/Seoul').toISOString(),
-      end: moment(event.end).tz('Asia/Seoul').toISOString()
+      start: moment(event.start).tz('Asia/Seoul').toISOString(), // KST로 변환
+      end: moment(event.end).tz('Asia/Seoul').toISOString()      // KST로 변환
     }));
     res.json(formattedEvents);
   } catch (err) {
@@ -70,6 +70,7 @@ app.get('/events', async (req, res) => {
 
 // 이벤트 생성
 app.post('/events', convertToKST, async (req, res) => {
+  // UTC로 변환하여 저장
   req.body.start = moment(req.body.start).utc().toDate();
   req.body.end = moment(req.body.end).utc().toDate();
   
@@ -89,6 +90,7 @@ app.post('/events', convertToKST, async (req, res) => {
 
 // 이벤트 수정
 app.put('/events/:id', convertToKST, async (req, res) => {
+  // UTC로 변환하여 저장
   req.body.start = moment(req.body.start).utc().toDate();
   req.body.end = moment(req.body.end).utc().toDate();
   
