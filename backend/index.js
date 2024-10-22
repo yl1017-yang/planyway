@@ -29,8 +29,8 @@ mongoose.connect(uri)
 const eventSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: String,
-  start: { type: Date, required: true },  // Date 타입으로 변경
-  end: { type: Date, required: true },    // Date 타입으로 변경
+  start: { type: Date, required: true },
+  end: { type: Date, required: true },
   backgroundColor: String,
   label: String,
   completed: Boolean,
@@ -40,10 +40,11 @@ const eventSchema = new mongoose.Schema({
 // 시간대 변환 미들웨어
 const convertToKST = (req, res, next) => {
   if (req.body.start) {
-    req.body.start = moment.tz(req.body.start, 'Asia/Seoul').toDate();
+    // ISO 8601 문자열을 Date 객체로 변환
+    req.body.start = moment(req.body.start).toDate();
   }
   if (req.body.end) {
-    req.body.end = moment.tz(req.body.end, 'Asia/Seoul').toDate();
+    req.body.end = moment(req.body.end).toDate();
   }
   next();
 };
@@ -55,11 +56,11 @@ app.get('/events', async (req, res) => {
   const limit = parseInt(req.query.limit) || 300;
   try {
     const events = await Event.find().limit(limit);
-    // 응답 시 KST로 변환
+    // ISO 8601 형식으로 응답
     const formattedEvents = events.map(event => ({
       ...event.toObject(),
-      start: moment(event.start).tz('Asia/Seoul').format(),
-      end: moment(event.end).tz('Asia/Seoul').format()
+      start: moment(event.start).tz('Asia/Seoul').toISOString(),
+      end: moment(event.end).tz('Asia/Seoul').toISOString()
     }));
     res.json(formattedEvents);
   } catch (err) {
@@ -72,11 +73,10 @@ app.post('/events', convertToKST, async (req, res) => {
   const event = new Event(req.body);
   try {
     const newEvent = await event.save();
-    // 응답 시 KST로 변환
     const formattedEvent = {
       ...newEvent.toObject(),
-      start: moment(newEvent.start).tz('Asia/Seoul').format(),
-      end: moment(newEvent.end).tz('Asia/Seoul').format()
+      start: moment(newEvent.start).tz('Asia/Seoul').toISOString(),
+      end: moment(newEvent.end).tz('Asia/Seoul').toISOString()
     };
     res.status(201).json(formattedEvent);
   } catch (err) {
@@ -91,11 +91,10 @@ app.put('/events/:id', convertToKST, async (req, res) => {
     if (!updatedEvent) {
       return res.status(404).json({ message: 'Event not found' });
     }
-    // 응답 시 KST로 변환
     const formattedEvent = {
       ...updatedEvent.toObject(),
-      start: moment(updatedEvent.start).tz('Asia/Seoul').format(),
-      end: moment(updatedEvent.end).tz('Asia/Seoul').format()
+      start: moment(updatedEvent.start).tz('Asia/Seoul').toISOString(),
+      end: moment(updatedEvent.end).tz('Asia/Seoul').toISOString()
     };
     res.json(formattedEvent);
   } catch (err) {

@@ -5,6 +5,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from "@fullcalendar/interaction"; 
 import axios from 'axios';
 import moment from 'moment-timezone';
+
 import "./FullCalendar.css";
 
 const FullCalendarPage = () => {
@@ -22,13 +23,15 @@ const FullCalendarPage = () => {
     completed: false 
   });
   
-  // 한국 시간으로 날짜 변환하는 유틸리티 함수
+  // ISO 8601 형식으로 날짜 변환
   const toKSTDate = (date) => {
-    return moment(date).tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+    if (!date) return '';
+    return moment.tz(date, 'Asia/Seoul').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
   };
 
-  const fromKSTDate = (dateStr) => {
-    return moment.tz(dateStr, 'Asia/Seoul').format();
+  const formatDateForInput = (date) => {
+    if (!date) return '';
+    return moment.tz(date, 'Asia/Seoul').format('YYYY-MM-DD');
   };
 
   useEffect(() => {
@@ -46,8 +49,8 @@ const FullCalendarPage = () => {
         id: event._id,
         title: event.title,
         description: event.description,
-        start: toKSTDate(event.start), // 한국 시간으로 변환
-        end: toKSTDate(event.end), // 한국 시간으로 변환
+        start: toKSTDate(event.start),
+        end: toKSTDate(event.end),
         backgroundColor: event.backgroundColor,
         label: event.label,
         completed: event.completed,
@@ -59,12 +62,12 @@ const FullCalendarPage = () => {
   };
 
   const onDateClick = (arg) => {
-    const kstDate = toKSTDate(arg.date);
+    const clickedDate = moment(arg.date).tz('Asia/Seoul');
     setNewEvent({ 
       title: '', 
       description: '', 
-      start: kstDate.split(' ')[0], // 날짜만 추출
-      end: kstDate.split(' ')[0], 
+      start: clickedDate.format('YYYY-MM-DD'),
+      end: clickedDate.format('YYYY-MM-DD'),
       backgroundColor: '', 
       label: '', 
       completed: false 
@@ -98,8 +101,8 @@ const FullCalendarPage = () => {
     setNewEvent({
       title: clickInfo.event.title,
       description: clickInfo.event.extendedProps.description,
-      start: clickInfo.event.startStr,
-      end: clickInfo.event.endStr ? clickInfo.event.endStr : clickInfo.event.startStr, // 끝나는 날짜가 설정되도록 수정
+      start: formatDateForInput(clickInfo.event.start),
+      end: formatDateForInput(clickInfo.event.end || clickInfo.event.start),
       backgroundColor: clickInfo.event.backgroundColor,
       label: clickInfo.event.extendedProps.label,
       completed: clickInfo.event.extendedProps.completed || false
@@ -114,10 +117,11 @@ const FullCalendarPage = () => {
       return;
     }
     try {
+      // 날짜를 ISO 8601 형식으로 변환
       const eventData = {
         ...newEvent,
-        start: fromKSTDate(newEvent.start),
-        end: fromKSTDate(newEvent.end),
+        start: moment.tz(`${newEvent.start} 00:00:00`, 'YYYY-MM-DD HH:mm:ss', 'Asia/Seoul').toISOString(),
+        end: moment.tz(`${newEvent.end} 23:59:59`, 'YYYY-MM-DD HH:mm:ss', 'Asia/Seoul').toISOString(),
       };
       
       const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', eventData);
@@ -144,8 +148,8 @@ const FullCalendarPage = () => {
     try {
       const eventData = {
         ...newEvent,
-        start: fromKSTDate(newEvent.start),
-        end: fromKSTDate(newEvent.end),
+        start: moment.tz(`${newEvent.start} 00:00:00`, 'YYYY-MM-DD HH:mm:ss', 'Asia/Seoul').toISOString(),
+        end: moment.tz(`${newEvent.end} 23:59:59`, 'YYYY-MM-DD HH:mm:ss', 'Asia/Seoul').toISOString(),
       };
       
       const response = await axios.put(
@@ -184,40 +188,46 @@ const FullCalendarPage = () => {
   };
 
   const handleEventChange = async (changeInfo) => {
-    const updatedEvent = {
-      id: changeInfo.event.id,
-      title: changeInfo.event.title,
-      start: changeInfo.event.startStr, 
-      end: changeInfo.event.endStr,
-      backgroundColor: changeInfo.event.backgroundColor,
-      label: changeInfo.event.extendedProps.label,
-      completed: changeInfo.event.extendedProps.completed || false,
-    };
-
     try {
-      await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${updatedEvent.id}`, updatedEvent);
-      setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
+      const updatedEvent = {
+        ...changeInfo.event.toPlainObject(),
+        start: toKSTDate(changeInfo.event.start),
+        end: toKSTDate(changeInfo.event.end),
+      };
+
+      await axios.put(
+        `https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${changeInfo.event.id}`, 
+        updatedEvent
+      );
+      
+      setEvents(events.map(event => 
+        event.id === changeInfo.event.id ? updatedEvent : event
+      ));
     } catch (error) {
       console.error('Error updating event:', error);
+      changeInfo.revert();
     }
   };
 
   const handleEventDrop = async (info) => {
-    const updatedEvent = {
-      id: info.event.id,
-      title: info.event.title,
-      start: info.event.startStr,
-      end: info.event.endStr,
-      backgroundColor: info.event.backgroundColor,
-      label: info.event.extendedProps.label,
-      completed: info.event.extendedProps.completed || false,
-    };
-
     try {
-      await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${updatedEvent.id}`, updatedEvent);
-      setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
+      const updatedEvent = {
+        ...info.event.toPlainObject(),
+        start: toKSTDate(info.event.start),
+        end: toKSTDate(info.event.end),
+      };
+
+      await axios.put(
+        `https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${info.event.id}`, 
+        updatedEvent
+      );
+      
+      setEvents(events.map(event => 
+        event.id === info.event.id ? updatedEvent : event
+      ));
     } catch (error) {
       console.error('Error updating event:', error);
+      info.revert();
     }
   };
 
@@ -250,8 +260,6 @@ const FullCalendarPage = () => {
         timeZone="Asia/Seoul"
         slotMinTime="00:00:00"
         slotMaxTime="24:00:00"
-        // timeZone="UTC"
-        // allDay={true}
         weekends={true}
         headerToolbar={{
           left: 'prevYear,prev,next,nextYear today',
