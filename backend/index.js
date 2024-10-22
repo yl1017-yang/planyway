@@ -25,8 +25,8 @@ mongoose.connect(uri)
 const eventSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: String,
-  start: { type: Date, required: true }, // Date 타입으로 변경
-  end: { type: Date, required: true },   // Date 타입으로 변경
+  start: { type: String, required: true },
+  end: { type: String, required: true },
   backgroundColor: String,
   label: String,
   completed: Boolean,
@@ -39,36 +39,17 @@ app.get('/events', async (req, res) => {
   const limit = parseInt(req.query.limit) || 300;
   try {
     const events = await Event.find().limit(limit);
-    // ISO 문자열로 변환하여 응답
-    const formattedEvents = events.map(event => ({
-      ...event.toObject(),
-      _id: event._id,
-      start: event.start.toISOString(),
-      end: event.end.toISOString()
-    }));
-    res.json(formattedEvents);
+    res.json(events);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
 app.post('/events', async (req, res) => {
-  // 클라이언트에서 받은 날짜 문자열을 Date 객체로 변환
-  const eventData = {
-    ...req.body,
-    start: new Date(req.body.start),
-    end: new Date(req.body.end)
-  };
-  
-  const event = new Event(eventData);
+  const event = new Event(req.body);
   try {
     const newEvent = await event.save();
-    // ISO 문자열로 변환하여 응답
-    res.status(201).json({
-      ...newEvent.toObject(),
-      start: newEvent.start.toISOString(),
-      end: newEvent.end.toISOString()
-    });
+    res.status(201).json(newEvent);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -76,29 +57,11 @@ app.post('/events', async (req, res) => {
 
 app.put('/events/:id', async (req, res) => {
   try {
-    // 클라이언트에서 받은 날짜 문자열을 Date 객체로 변환
-    const eventData = {
-      ...req.body,
-      start: new Date(req.body.start),
-      end: new Date(req.body.end)
-    };
-
-    const updatedEvent = await Event.findByIdAndUpdate(
-      req.params.id,
-      eventData,
-      { new: true }
-    );
-    
+    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedEvent) {
       return res.status(404).json({ message: 'Event not found' });
     }
-    
-    // ISO 문자열로 변환하여 응답
-    res.json({
-      ...updatedEvent.toObject(),
-      start: updatedEvent.start.toISOString(),
-      end: updatedEvent.end.toISOString()
-    });
+    res.json(updatedEvent);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

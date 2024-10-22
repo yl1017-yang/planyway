@@ -290,3 +290,19 @@ input[type='text']:focus:-ms-input-placeholder{visibility:hidden}
 .modal-content button:hover {
   background-color: #076b6b;
 }
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.delete-button {
+  background-color: #ff4444;
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #cc0000;
+}

@@ -8,19 +8,12 @@ import axios from 'axios';
 import "./FullCalendar.css";
 
 const FullCalendarPage = () => {
+
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [newEvent, setNewEvent] = useState({
-    title: '',
-    description: '',
-    start: '',
-    end: '',
-    backgroundColor: '',
-    label: '',
-    completed: false
-  });
+  const [newEvent, setNewEvent] = useState({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
 
   useEffect(() => {
     fetchEvents();
@@ -28,14 +21,15 @@ const FullCalendarPage = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events?limit=7');
+      const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events?limit=7'); //axios.get 호출의 URL에 ?limit=7 쿼리 파라미터를 추가하여 가져오는 이벤트 수를 7개로 제한
+
+      console.log(response);
       console.log(response.data);
 
       const formattedEvents = response.data.map(event => ({
-        id: event._id,
+        id: event._id, // MongoDB의 _id를 id로 변환
         title: event.title,
         description: event.description,
-        // ISO 문자열을 그대로 사용
         start: event.start,
         end: event.end,
         backgroundColor: event.backgroundColor,
@@ -49,22 +43,7 @@ const FullCalendarPage = () => {
   };
 
   const onDateClick = (arg) => {
-    // 클릭한 날짜의 시작과 끝 시간 설정
-    const clickedDate = new Date(arg.date);
-    const startDate = new Date(clickedDate);
-    startDate.setHours(0, 0, 0);
-    const endDate = new Date(clickedDate);
-    endDate.setHours(23, 59, 59);
-
-    setNewEvent({
-      title: '',
-      description: '',
-      start: startDate.toISOString().split('T')[0],
-      end: endDate.toISOString().split('T')[0],
-      backgroundColor: '',
-      label: '',
-      completed: false
-    });
+    setNewEvent({ title: '', description: '', start: arg.dateStr, end: arg.dateStr, backgroundColor: '', label: '', completed: false }); // 제목 초기화 추가
     setIsEditing(false);
     setShowModal(true);
   };
@@ -90,21 +69,15 @@ const FullCalendarPage = () => {
   };
 
   const handleEventClick = (clickInfo) => {
-    const event = clickInfo.event;
-    setSelectedEvent(event);
-    
-    // 시작 날짜와 종료 날짜를 YYYY-MM-DD 형식으로 변환
-    const startDate = new Date(event.start).toISOString().split('T')[0];
-    const endDate = new Date(event.end || event.start).toISOString().split('T')[0];
-
+    setSelectedEvent(clickInfo.event);
     setNewEvent({
-      title: event.title,
-      description: event.extendedProps.description,
-      start: startDate,
-      end: endDate,
-      backgroundColor: event.backgroundColor,
-      label: event.extendedProps.label,
-      completed: event.extendedProps.completed || false
+      title: clickInfo.event.title,
+      description: clickInfo.event.extendedProps.description,
+      start: clickInfo.event.startStr,
+      end: clickInfo.event.endStr ? clickInfo.event.endStr : clickInfo.event.startStr, // 끝나는 날짜가 설정되도록 수정
+      backgroundColor: clickInfo.event.backgroundColor,
+      label: clickInfo.event.extendedProps.label,
+      completed: clickInfo.event.extendedProps.completed || false
     });
     setIsEditing(true);
     setShowModal(true);
@@ -115,24 +88,13 @@ const FullCalendarPage = () => {
       alert('제목은 꼭 입력해주세요');
       return;
     }
-
     try {
-      // 시작 시간과 종료 시간 설정
-      const startDateTime = new Date(newEvent.start);
-      startDateTime.setHours(0, 0, 0);
-      const endDateTime = new Date(newEvent.end);
-      endDateTime.setHours(23, 59, 59);
-
-      const eventData = {
+      const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', {
         ...newEvent,
-        start: startDateTime.toISOString(),
-        end: endDateTime.toISOString()
-      };
-
-      const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', eventData);
-      setEvents([...events, { id: response.data._id, ...response.data }]);
+      });
+      setEvents([...events, { id: response.data._id, ...response.data }]); // 새로 추가된 이벤트의 _id를 id로 변환
       setShowModal(false);
-      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
+      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false }); 
     } catch (error) {
       console.error('Error adding event:', error);
     }
@@ -143,21 +105,10 @@ const FullCalendarPage = () => {
       alert('제목은 꼭 입력해주세요');
       return;
     }
-
     try {
-      // 시작 시간과 종료 시간 설정
-      const startDateTime = new Date(newEvent.start);
-      startDateTime.setHours(0, 0, 0);
-      const endDateTime = new Date(newEvent.end);
-      endDateTime.setHours(23, 59, 59);
-
-      const eventData = {
+      const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, {
         ...newEvent,
-        start: startDateTime.toISOString(),
-        end: endDateTime.toISOString()
-      };
-
-      const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, eventData);
+      });
       setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data } : event));
       setShowModal(false);
       setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
@@ -180,40 +131,38 @@ const FullCalendarPage = () => {
   };
 
   const handleEventChange = async (changeInfo) => {
-    const event = changeInfo.event;
     const updatedEvent = {
-      id: event.id,
-      title: event.title,
-      start: event.start.toISOString(),
-      end: event.end.toISOString(),
-      backgroundColor: event.backgroundColor,
-      label: event.extendedProps.label,
-      completed: event.extendedProps.completed || false,
+      id: changeInfo.event.id,
+      title: changeInfo.event.title,
+      start: changeInfo.event.startStr, 
+      end: changeInfo.event.endStr,
+      backgroundColor: changeInfo.event.backgroundColor,
+      label: changeInfo.event.extendedProps.label,
+      completed: changeInfo.event.extendedProps.completed || false,
     };
 
     try {
       await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${updatedEvent.id}`, updatedEvent);
-      setEvents(events.map(evt => evt.id === updatedEvent.id ? updatedEvent : evt));
+      setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
     } catch (error) {
       console.error('Error updating event:', error);
     }
   };
 
   const handleEventDrop = async (info) => {
-    const event = info.event;
     const updatedEvent = {
-      id: event.id,
-      title: event.title,
-      start: event.start.toISOString(),
-      end: event.end.toISOString(),
-      backgroundColor: event.backgroundColor,
-      label: event.extendedProps.label,
-      completed: event.extendedProps.completed || false,
+      id: info.event.id,
+      title: info.event.title,
+      start: info.event.startStr,
+      end: info.event.endStr,
+      backgroundColor: info.event.backgroundColor,
+      label: info.event.extendedProps.label,
+      completed: info.event.extendedProps.completed || false,
     };
 
     try {
       await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${updatedEvent.id}`, updatedEvent);
-      setEvents(events.map(evt => evt.id === updatedEvent.id ? updatedEvent : evt));
+      setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
     } catch (error) {
       console.error('Error updating event:', error);
     }
@@ -225,22 +174,10 @@ const FullCalendarPage = () => {
 
   const eventContent = (eventInfo) => {
     const isCompleted = eventInfo.event.extendedProps.completed;
-    const startTime = new Date(eventInfo.event.start).toLocaleTimeString('ko-KR', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    });
-    const endTime = new Date(eventInfo.event.end).toLocaleTimeString('ko-KR', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    });
-
     return (
       <div style={{ textDecoration: isCompleted ? 'line-through' : 'none' }}>
         [{eventInfo.event.extendedProps.label}] 
         {eventInfo.event.title} 
-        --{startTime}~{endTime}
       </div>
     );
   };
@@ -249,16 +186,29 @@ const FullCalendarPage = () => {
     return dayCellInfo.dayNumberText.replace('일', '');
   };
 
+  const plugin = [
+    dayGridPlugin, // 월간 달력 // day 그리드
+    timeGridPlugin, // 주간, 일간 달력 // time 그리드 보기
+    interactionPlugin
+    /* 이벤트를 위한 플러그인
+    일정 추가/수정 : 캘린더에 새 이벤트를 추가하거나 기존 이벤트를 수정 
+      : 이벤트를 클릭하면 이벤트 정보를 수정하는 팝업이나 모달 띄움
+    드래그 앤 드롭 : 마우스로 드래그하여 다른 날짜나 시간으로 이동
+    리사이징 : 기간을 변경하여 이벤트의 기간을 늘이거나 줄임
+    일정 클릭 이벤트
+    */
+  ];
+
   return (
     <div>
       <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        plugins={plugin}
         initialView="dayGridMonth"
         events={events}
         height="100vh"
-        locale="ko"
-        timeZone="Asia/Seoul"
-        // timeZone="UTC"
+        locale={'ko'}
+        // timeZone="Asia/Seoul"
+        timeZone="UTC"
         // allDay={true}
         weekends={true}
         headerToolbar={{
