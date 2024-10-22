@@ -70,6 +70,9 @@ app.get('/events', async (req, res) => {
 
 // 이벤트 생성
 app.post('/events', convertToKST, async (req, res) => {
+  req.body.start = moment(req.body.start).utc().toDate();
+  req.body.end = moment(req.body.end).utc().toDate();
+  
   const event = new Event(req.body);
   try {
     const newEvent = await event.save();
@@ -86,6 +89,9 @@ app.post('/events', convertToKST, async (req, res) => {
 
 // 이벤트 수정
 app.put('/events/:id', convertToKST, async (req, res) => {
+  req.body.start = moment(req.body.start).utc().toDate();
+  req.body.end = moment(req.body.end).utc().toDate();
+  
   try {
     const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedEvent) {

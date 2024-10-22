@@ -120,8 +120,8 @@ const FullCalendarPage = () => {
       // 날짜를 ISO 8601 형식으로 변환
       const eventData = {
         ...newEvent,
-        start: moment.tz(`${newEvent.start} 00:00:00`, 'YYYY-MM-DD HH:mm:ss', 'Asia/Seoul').toISOString(),
-        end: moment.tz(`${newEvent.end} 23:59:59`, 'YYYY-MM-DD HH:mm:ss', 'Asia/Seoul').toISOString(),
+        start: moment.tz(`${newEvent.start} 00:00:00`, 'Asia/Seoul').utc().toISOString(),
+        end: moment.tz(`${newEvent.end} 23:59:59`, 'Asia/Seoul').utc().toISOString(),
       };
       
       const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', eventData);
@@ -148,8 +148,8 @@ const FullCalendarPage = () => {
     try {
       const eventData = {
         ...newEvent,
-        start: moment.tz(`${newEvent.start} 00:00:00`, 'YYYY-MM-DD HH:mm:ss', 'Asia/Seoul').toISOString(),
-        end: moment.tz(`${newEvent.end} 23:59:59`, 'YYYY-MM-DD HH:mm:ss', 'Asia/Seoul').toISOString(),
+        start: moment.tz(`${newEvent.start} 00:00:00`, 'Asia/Seoul').utc().toISOString(),
+        end: moment.tz(`${newEvent.end} 23:59:59`, 'Asia/Seoul').utc().toISOString(),
       };
       
       const response = await axios.put(
@@ -279,32 +279,25 @@ const FullCalendarPage = () => {
           },
         }}
         buttonText={{
-          // prev: "이전",
-          // next: "다음",
-          // prevYear: "이전 년도",
-          // nextYear: "다음 년도",
           today: "오늘",
           timeGridWeek: "주별시간",
           timeGridDay: "일별시간",
           list: "리스트"
         }}
-
-        // titleFormat={{ year: "numeric", month: "short", day: "numeric" }}
         eventColor="rgba(0, 0, 0, 0.8)"
         eventTextColor="rgba(0, 0, 0, 0.8)"
         eventBackgroundColor="#e6f6e3"
         dateClick={onDateClick}
         eventClick={handleEventClick}
-        eventChange={handleEventChange}// 이벤트 drop 혹은 resize 될 때
+        eventChange={handleEventChange} // 이벤트 drop 혹은 resize 될 때
         eventContent={eventContent}
-        editable={true} //사용자의 수정 가능 여부 (이벤트 추가/수정, 드래그 앤 드롭 활성화)
+        editable={true} // 사용자의 수정 가능 여부 (이벤트 추가/수정, 드래그 앤 드롭 활성화)
         eventDrop={handleEventDrop} // 드래그 앤 드롭 이벤트 처리기 추가
         selectable={true} // 사용자의 날짜 선택 여부
-        droppable={true} //드래그 앤 드롭 기능을 활성화하여 외부 이벤트를 캘린더에 추가
+        droppable={true} // 드래그 앤 드롭 기능을 활성화하여 외부 이벤트를 캘린더에 추가
         selectMirror={true} // 사용자의 시간 선택시 time 표시 여부
         nowIndicator={true}
         navLinks={true}
-        // navLinkHint={"클릭시 해당 날짜로 이동합니다."} // 날짜에 호버시 힌트 문구
         eventResizableFromStart={true}        
         dayCellContent={dayCellContent}
         eventDisplay="block"
