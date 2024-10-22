@@ -270,8 +270,8 @@ const FullCalendarPage = () => {
         events={events}
         height="100vh"
         locale={'ko'}
-        // timeZone="Asia/Seoul"
-        timeZone="UTC"
+        timeZone="Asia/Seoul"
+        // timeZone="UTC"
         // allDay={true}
         weekends={true}
         headerToolbar={{
