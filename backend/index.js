@@ -18,20 +18,43 @@ app.use(cors({
 app.use(bodyParser.json());
 
 const uri = process.env.MONGODB_URI || "mongodb+srv://yangwonder1017:0KffJ8dB5DIWmZeP@cluster-planyway.dou1w.mongodb.net/planyway?retryWrites=true&w=majority";
-mongoose.connect(uri)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log('MongoDB connection error:', err));
+
+// Mongoose 타임존 설정
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  // Mongoose 시간대 설정
+  timestamps: { currentTime: () => new Date().getTime() + (9 * 60 * 60 * 1000) }
+})
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.log('MongoDB connection error:', err));
 
 const eventSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: String,
-  start: { type: String, required: true },
-  end: { type: String, required: true },
+  start: { type: Date, required: true },
+  end: { type: Date, required: true },
   backgroundColor: String,
   label: String,
   completed: Boolean,
   allDay: { type: Boolean, default: true }
+}, {
+  // 스키마 레벨에서 타임스탬프 설정
+  timestamps: { 
+    currentTime: () => new Date().getTime() + (9 * 60 * 60 * 1000)
+  }
 });
+
+// KST로 변환하는 미들웨어
+const convertToKST = (req, res, next) => {
+  if (req.body.start) {
+    req.body.start = new Date(new Date(req.body.start).getTime() + (9 * 60 * 60 * 1000));
+  }
+  if (req.body.end) {
+    req.body.end = new Date(new Date(req.body.end).getTime() + (9 * 60 * 60 * 1000));
+  }
+  next();
+};
 
 const Event = mongoose.model('Event', eventSchema);
 
@@ -39,13 +62,20 @@ app.get('/events', async (req, res) => {
   const limit = parseInt(req.query.limit) || 300;
   try {
     const events = await Event.find().limit(limit);
-    res.json(events);
+    // 응답 데이터를 KST로 변환
+    const kstEvents = events.map(event => ({
+      ...event.toObject(),
+      start: new Date(event.start.getTime() + (9 * 60 * 60 * 1000)),
+      end: new Date(event.end.getTime() + (9 * 60 * 60 * 1000))
+    }));
+    res.json(kstEvents);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-app.post('/events', async (req, res) => {
+// POST, PUT 요청에 KST 변환 미들웨어 적용
+app.post('/events', convertToKST, async (req, res) => {
   const event = new Event(req.body);
   try {
     const newEvent = await event.save();
@@ -55,7 +85,7 @@ app.post('/events', async (req, res) => {
   }
 });
 
-app.put('/events/:id', async (req, res) => {
+app.put('/events/:id', convertToKST, async (req, res) => {
   try {
     const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedEvent) {
