@@ -23,16 +23,18 @@ const FullCalendarPage = () => {
     completed: false 
   });
 
-  // KST로 날짜 변환하는 헬퍼 함수
-  const convertToKST = (date) => {
-    const kstDate = new Date(date);
-    kstDate.setHours(kstDate.getHours() + 9);
-    return kstDate.toISOString().slice(0, 16);
+  // 날짜를 YYYY-MM-DD 형식으로 변환
+  const formatDateForInput = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
-  const convertFromKST = (dateStr) => {
+  // ISO 문자열을 서버에 전송할 형식으로 변환
+  const formatDateForServer = (dateStr) => {
     const date = new Date(dateStr);
-    date.setHours(date.getHours() - 9);
     return date.toISOString();
   };
 
@@ -51,8 +53,8 @@ const FullCalendarPage = () => {
         id: event._id,
         title: event.title,
         description: event.description,
-        start: convertToKST(event.start),
-        end: convertToKST(event.end),
+        start: event.start,
+        end: event.end,
         backgroundColor: event.backgroundColor,
         label: event.label,
         completed: event.completed,
@@ -64,12 +66,12 @@ const FullCalendarPage = () => {
   };
 
   const onDateClick = (arg) => {
-    const kstDate = convertToKST(arg.date);
+    const formattedDate = formatDateForInput(arg.date);
     setNewEvent({ 
       title: '', 
       description: '', 
-      start: kstDate, 
-      end: kstDate, 
+      start: formattedDate,
+      end: formattedDate,
       backgroundColor: '', 
       label: '', 
       completed: false 
@@ -103,8 +105,8 @@ const FullCalendarPage = () => {
     setNewEvent({
       title: clickInfo.event.title,
       description: clickInfo.event.extendedProps.description,
-      start: clickInfo.event.startStr,
-      end: clickInfo.event.endStr ? clickInfo.event.endStr : clickInfo.event.startStr, // 끝나는 날짜가 설정되도록 수정
+      start: formatDateForInput(clickInfo.event.start),
+      end: formatDateForInput(clickInfo.event.end || clickInfo.event.start),
       backgroundColor: clickInfo.event.backgroundColor,
       label: clickInfo.event.extendedProps.label,
       completed: clickInfo.event.extendedProps.completed || false
@@ -121,15 +123,15 @@ const FullCalendarPage = () => {
     try {
       const eventData = {
         ...newEvent,
-        start: convertFromKST(newEvent.start),
-        end: convertFromKST(newEvent.end)
+        start: formatDateForServer(newEvent.start),
+        end: formatDateForServer(newEvent.end)
       };
       const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', eventData);
       const formattedEvent = {
         id: response.data._id,
         ...response.data,
-        start: convertToKST(response.data.start),
-        end: convertToKST(response.data.end)
+        start: formatDateForInput(response.data.start),
+        end: formatDateForInput(response.data.end)
       };
       setEvents([...events, formattedEvent]);
       setShowModal(false);
@@ -147,15 +149,15 @@ const FullCalendarPage = () => {
     try {
       const eventData = {
         ...newEvent,
-        start: convertFromKST(newEvent.start),
-        end: convertFromKST(newEvent.end)
+        start: formatDateForServer(newEvent.start),
+        end: formatDateForServer(newEvent.end)
       };
       const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, eventData);
       const formattedEvent = {
         id: response.data._id,
         ...response.data,
-        start: convertToKST(response.data.start),
-        end: convertToKST(response.data.end)
+        start: formatDateForInput(response.data.start),
+        end: formatDateForInput(response.data.end)
       };
       setEvents(events.map(event => event.id === selectedEvent.id ? formattedEvent : event));
       setShowModal(false);
@@ -330,9 +332,9 @@ const FullCalendarPage = () => {
             </label>
             <label>
               <span>날짜</span>
-              <input type="date" name="start" value={newEvent.start} onChange={handleInputChange} />
+              <input type="date" name="start" value= { newEvent.start} onChange= { handleInputChange} />
               ~
-              <input type="date" name="end" value={newEvent.end} onChange={handleInputChange} />
+              <input type="date" name="end" value= { newEvent.end} onChange= { handleInputChange} />
             </label>
             <label>
               <span>라벨</span>
