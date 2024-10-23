@@ -13,30 +13,7 @@ const FullCalendarPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [newEvent, setNewEvent] = useState({ 
-    title: '', 
-    description: '', 
-    start: '', 
-    end: '', 
-    backgroundColor: '', 
-    label: '', 
-    completed: false 
-  });
-
-  // 날짜를 YYYY-MM-DD 형식으로 변환
-  const formatDateForInput = (date) => {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
-  // ISO 문자열을 서버에 전송할 형식으로 변환
-  const formatDateForServer = (dateStr) => {
-    const date = new Date(dateStr);
-    return date.toISOString();
-  };
+  const [newEvent, setNewEvent] = useState({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
 
   useEffect(() => {
     fetchEvents();
@@ -44,13 +21,13 @@ const FullCalendarPage = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events?limit=7');
+      const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events?limit=7'); //axios.get 호출의 URL에 ?limit=7 쿼리 파라미터를 추가하여 가져오는 이벤트 수를 7개로 제한
 
       console.log(response);
       console.log(response.data);
 
       const formattedEvents = response.data.map(event => ({
-        id: event._id,
+        id: event._id, // MongoDB의 _id를 id로 변환
         title: event.title,
         description: event.description,
         start: event.start,
@@ -66,16 +43,7 @@ const FullCalendarPage = () => {
   };
 
   const onDateClick = (arg) => {
-    const formattedDate = formatDateForInput(arg.date);
-    setNewEvent({ 
-      title: '', 
-      description: '', 
-      start: formattedDate,
-      end: formattedDate,
-      backgroundColor: '', 
-      label: '', 
-      completed: false 
-    });
+    setNewEvent({ title: '', description: '', start: arg.dateStr, end: arg.dateStr, backgroundColor: '', label: '', completed: false }); // 제목 초기화 추가
     setIsEditing(false);
     setShowModal(true);
   };
@@ -105,8 +73,8 @@ const FullCalendarPage = () => {
     setNewEvent({
       title: clickInfo.event.title,
       description: clickInfo.event.extendedProps.description,
-      start: formatDateForInput(clickInfo.event.start),
-      end: formatDateForInput(clickInfo.event.end || clickInfo.event.start),
+      start: clickInfo.event.startStr,
+      end: clickInfo.event.endStr ? clickInfo.event.endStr : clickInfo.event.startStr, // 끝나는 날짜가 설정되도록 수정
       backgroundColor: clickInfo.event.backgroundColor,
       label: clickInfo.event.extendedProps.label,
       completed: clickInfo.event.extendedProps.completed || false
@@ -121,21 +89,12 @@ const FullCalendarPage = () => {
       return;
     }
     try {
-      const eventData = {
+      const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', {
         ...newEvent,
-        start: formatDateForServer(newEvent.start),
-        end: formatDateForServer(newEvent.end)
-      };
-      const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', eventData);
-      const formattedEvent = {
-        id: response.data._id,
-        ...response.data,
-        start: formatDateForInput(response.data.start),
-        end: formatDateForInput(response.data.end)
-      };
-      setEvents([...events, formattedEvent]);
+      });
+      setEvents([...events, { id: response.data._id, ...response.data }]); // 새로 추가된 이벤트의 _id를 id로 변환
       setShowModal(false);
-      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
+      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false }); 
     } catch (error) {
       console.error('Error adding event:', error);
     }
@@ -147,19 +106,10 @@ const FullCalendarPage = () => {
       return;
     }
     try {
-      const eventData = {
+      const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, {
         ...newEvent,
-        start: formatDateForServer(newEvent.start),
-        end: formatDateForServer(newEvent.end)
-      };
-      const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, eventData);
-      const formattedEvent = {
-        id: response.data._id,
-        ...response.data,
-        start: formatDateForInput(response.data.start),
-        end: formatDateForInput(response.data.end)
-      };
-      setEvents(events.map(event => event.id === selectedEvent.id ? formattedEvent : event));
+      });
+      setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data } : event));
       setShowModal(false);
       setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
       setSelectedEvent(null);
@@ -227,8 +177,7 @@ const FullCalendarPage = () => {
     return (
       <div style={{ textDecoration: isCompleted ? 'line-through' : 'none' }}>
         [{eventInfo.event.extendedProps.label}] 
-        {eventInfo.event.title} --
-        {new Date(eventInfo.event.start).toLocaleTimeString()} - {new Date(eventInfo.event.end).toLocaleTimeString()}
+        {eventInfo.event.title} 
       </div>
     );
   };
@@ -257,8 +206,10 @@ const FullCalendarPage = () => {
         initialView="dayGridMonth"
         events={events}
         height="100vh"
-        locale='ko'
+        locale={'ko'}
         timeZone="Asia/Seoul"
+        // timeZone="UTC"
+        // allDay={true}
         weekends={true}
         headerToolbar={{
           left: 'prevYear,prev,next,nextYear today',
@@ -276,18 +227,12 @@ const FullCalendarPage = () => {
           dayGridDay: { 
             buttonText: '일간'
           },
-          timeGridWeek: {
-            buttonText: '주별시간',
-            slotMinTime: '00:00:00',
-            slotMaxTime: '24:00:00'
-          },
-          timeGridDay: {
-            buttonText: '일별시간',
-            slotMinTime: '00:00:00',
-            slotMaxTime: '24:00:00'
-          }
         }}
         buttonText={{
+          // prev: "이전",
+          // next: "다음",
+          // prevYear: "이전 년도",
+          // nextYear: "다음 년도",
           today: "오늘",
           timeGridWeek: "주별시간",
           timeGridDay: "일별시간",
@@ -332,9 +277,9 @@ const FullCalendarPage = () => {
             </label>
             <label>
               <span>날짜</span>
-              <input type="date" name="start" value= { newEvent.start} onChange= { handleInputChange} />
+              <input type="date" name="start" value={newEvent.start} onChange={handleInputChange} />
               ~
-              <input type="date" name="end" value= { newEvent.end} onChange= { handleInputChange} />
+              <input type="date" name="end" value={newEvent.end} onChange={handleInputChange} />
             </label>
             <label>
               <span>라벨</span>
