@@ -1,11 +1,19 @@
 {
   "files": {
     "main.css": "/planyway/static/css/main.b6eaf132.css",
+<<<<<<< HEAD
     "main.js": "/planyway/static/js/main.18af6b02.js",
+=======
+    "main.js": "/planyway/static/js/main.c66c6f0b.js",
+>>>>>>> e5352b69eb88f24fbd9a163b237d7f7a9b205250
     "index.html": "/planyway/index.html"
   },
   "entrypoints": [
     "static/css/main.b6eaf132.css",
+<<<<<<< HEAD
     "static/js/main.18af6b02.js"
+=======
+    "static/js/main.c66c6f0b.js"
+>>>>>>> e5352b69eb88f24fbd9a163b237d7f7a9b205250
   ]
 }

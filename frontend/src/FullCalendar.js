@@ -211,7 +211,7 @@ const FullCalendarPage = () => {
         initialView="dayGridMonth"
         events={events}
         height="100vh"
-        locale='ko'
+        locale={'ko'}
         timeZone="Asia/Seoul"
         // timeZone="UTC"
         // allDay={true}
