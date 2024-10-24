@@ -25,12 +25,13 @@ mongoose.connect(uri)
 const eventSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: String,
-  start: { type: String, required: true },
-  end: { type: String, required: true },
+  start: { type: Date, required: true },
+  end: { type: Date, required: true },
+  serverTime: { type: Date, default: Date.now }, 
   backgroundColor: String,
   label: String,
   completed: Boolean,
-  allDay: { type: Boolean, default: true }
+  allDay: { type: Boolean, default: false }
 });
 
 const Event = mongoose.model('Event', eventSchema);
