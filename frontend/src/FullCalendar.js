@@ -13,15 +13,7 @@ const FullCalendarPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [newEvent, setNewEvent] = useState({ 
-    title: '', 
-    description: '', 
-    start: '', 
-    end: '', 
-    backgroundColor: '', 
-    label: '', 
-    completed: false 
-  });
+  const [newEvent, setNewEvent] = useState( { title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false }  );
 
   useEffect(() => {
     fetchEvents();
@@ -210,7 +202,7 @@ const FullCalendarPage = () => {
   return (
     <div>
       <FullCalendar
-        key={events.length} // events의 길이를 key로 사용하여 리렌더링
+        //key={events.length} // events의 길이를 key로 사용하여 리렌더링
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         events={events}
@@ -271,8 +263,6 @@ const FullCalendarPage = () => {
           basicWeek: true,
           default: true
         }}
-        //eventAdd={handleAddEvent} // 이벤트 추가 핸들러
-        //eventRemove={handleDeleteEvent} // 이벤트 삭제 핸들러   
       />
 
       {showModal && (
