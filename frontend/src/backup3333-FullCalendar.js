@@ -13,15 +13,7 @@ const FullCalendarPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [newEvent, setNewEvent] = useState({ 
-    title: '', 
-    description: '', 
-    start: '', 
-    end: '', 
-    backgroundColor: '', 
-    label: '', 
-    completed: false 
-  });
+  const [newEvent, setNewEvent] = useState({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
 
   useEffect(() => {
     fetchEvents();
