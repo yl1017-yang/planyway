@@ -21,17 +21,16 @@ const FullCalendarPage = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events?limit=7'); //axios.get 호출의 URL에 ?limit=7 쿼리 파라미터를 추가하여 가져오는 이벤트 수를 7개로 제한
+      const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events?limit=7');
 
-      console.log(response);
       console.log(response.data);
 
       const formattedEvents = response.data.map(event => ({
         id: event._id, // MongoDB의 _id를 id로 변환
         title: event.title,
         description: event.description,
-        start: event.start,
-        end: event.end,
+        start: new Date(event.start).toISOString(),
+        end: new Date(event.end).toISOString(), 
         backgroundColor: event.backgroundColor,
         label: event.label,
         completed: event.completed,
@@ -50,8 +49,13 @@ const FullCalendarPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewEvent({ ...newEvent, [name]: value });
-  };
+    if (name === 'start' || name === 'end') {
+        const date = new Date(value);
+        setNewEvent({ ...newEvent, [name]: date.toISOString().split('T')[0] }); // yyyy-MM-dd 형식으로 설정
+    } else {
+        setNewEvent({ ...newEvent, [name]: value });
+    }
+};
 
   const handleLabelChange = (e) => {
     const { value } = e.target;
@@ -73,8 +77,8 @@ const FullCalendarPage = () => {
     setNewEvent({
       title: clickInfo.event.title,
       description: clickInfo.event.extendedProps.description,
-      start: clickInfo.event.startStr,
-      end: clickInfo.event.endStr ? clickInfo.event.endStr : clickInfo.event.startStr, // 끝나는 날짜가 설정되도록 수정
+      start: clickInfo.event.startStr.split('T')[0], // yyyy-MM-dd 형식으로 설정
+      end: clickInfo.event.endStr ? clickInfo.event.endStr.split('T')[0] : clickInfo.event.startStr.split('T')[0], // 종료 날짜가 없을 경우 시작 날짜로 설정
       backgroundColor: clickInfo.event.backgroundColor,
       label: clickInfo.event.extendedProps.label,
       completed: clickInfo.event.extendedProps.completed || false
@@ -91,8 +95,10 @@ const FullCalendarPage = () => {
     try {
       const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', {
         ...newEvent,
+        start: new Date(newEvent.start).toISOString(),
+        end: new Date(newEvent.end).toISOString(),
       });
-      setEvents([...events, { id: response.data._id, ...response.data }]); // 새로 추가된 이벤트의 _id를 id로 변환
+      setEvents([...events, { id: response.data._id, ...response.data }]);
       setShowModal(false);
       setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false }); 
     } catch (error) {
@@ -108,6 +114,8 @@ const FullCalendarPage = () => {
     try {
       const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, {
         ...newEvent,
+        start: new Date(newEvent.start).toISOString(),
+        end: new Date(newEvent.end).toISOString(),
       });
       setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data } : event));
       setShowModal(false);
@@ -138,8 +146,8 @@ const FullCalendarPage = () => {
     const updatedEvent = {
       id: changeInfo.event.id,
       title: changeInfo.event.title,
-      start: changeInfo.event.startStr, 
-      end: changeInfo.event.endStr,
+      start: changeInfo.event.startStr.split('T')[0], 
+      end: changeInfo.event.endStr.split('T')[0],
       backgroundColor: changeInfo.event.backgroundColor,
       label: changeInfo.event.extendedProps.label,
       completed: changeInfo.event.extendedProps.completed || false,
@@ -157,8 +165,8 @@ const FullCalendarPage = () => {
     const updatedEvent = {
       id: info.event.id,
       title: info.event.title,
-      start: info.event.startStr,
-      end: info.event.endStr,
+      start: info.event.startStr.split('T')[0],
+      end: info.event.endStr.split('T')[0],
       backgroundColor: info.event.backgroundColor,
       label: info.event.extendedProps.label,
       completed: info.event.extendedProps.completed || false,
@@ -181,8 +189,8 @@ const FullCalendarPage = () => {
     return (
       <div style={{ textDecoration: isCompleted ? 'line-through' : 'none' }}>
         [{eventInfo.event.extendedProps.label}] 
-        {eventInfo.event.title} --
-        {new Date(eventInfo.event.start).toTimeString()} - {new Date(eventInfo.event.end).toTimeString()}
+        {eventInfo.event.title}
+        {/* {new Date(eventInfo.event.start).toISOString()} - {new Date(eventInfo.event.end).toISOString()} */}
       </div>
     );
   };
