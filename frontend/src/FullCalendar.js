@@ -89,40 +89,40 @@ const FullCalendarPage = () => {
 
   const handleAddEvent = async () => {
     if (!newEvent.title) {
-      alert('제목은 꼭 입력해주세요');
-      return;
+        alert('제목은 꼭 입력해주세요');
+        return;
     }
     try {
-      const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', {
-        ...newEvent,
-        start: new Date(newEvent.start).toISOString(),
-        end: new Date(newEvent.end).toISOString(),
-      });
-      setEvents([...events, { id: response.data._id, ...response.data }]);
-      setShowModal(false);
-      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false }); 
+        const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', {
+            ...newEvent,
+            start: new Date(newEvent.start).toISOString(),
+            end: new Date(newEvent.end).toISOString(),
+        });
+        setEvents([...events, { id: response.data._id, ...response.data }]);
+        setShowModal(false);
+        setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false }); 
     } catch (error) {
-      console.error('Error adding event:', error);
+        console.error('Error adding event:', error);
     }
   };
 
   const handleEditEvent = async () => {
     if (!newEvent.title) {
-      alert('제목은 꼭 입력해주세요');
-      return;
+        alert('제목은 꼭 입력해주세요');
+        return;
     }
     try {
-      const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, {
-        ...newEvent,
-        start: new Date(newEvent.start).toISOString(),
-        end: new Date(newEvent.end).toISOString(),
-      });
-      setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data } : event));
-      setShowModal(false);
-      setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
-      setSelectedEvent(null);
+        const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, {
+            ...newEvent,
+            start: new Date(newEvent.start).toISOString(),
+            end: new Date(newEvent.end).toISOString(),
+        });
+        setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data } : event));
+        setShowModal(false);
+        setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
+        setSelectedEvent(null);
     } catch (error) {
-      console.error('Error editing event:', error);
+        console.error('Error editing event:', error);
     }
   };
 

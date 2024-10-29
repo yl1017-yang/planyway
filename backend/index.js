@@ -7,10 +7,17 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://yl1017-yang.github.io'
-  ],
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://yl1017-yang.github.io',
+    ];
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
