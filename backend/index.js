@@ -47,7 +47,8 @@ app.get('/events', async (req, res) => {
   const limit = parseInt(req.query.limit) || 300;
   try {
     const events = await Event.find().limit(limit);
-    res.json(events);
+    const serverTime = new Date(); // Get the current server time
+    res.json({ events, serverTime }); // Send both events and server time
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -8,7 +8,7 @@ import axios from 'axios';
 import "./FullCalendar.css";
 
 const FullCalendarPage = () => {
-
+  const [serverTime, setServerTime] = useState(''); // Add state for server time
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -36,6 +36,7 @@ const FullCalendarPage = () => {
         completed: event.completed,
       }));
       setEvents(formattedEvents);
+      setServerTime(new Date(response.data.serverTime).toLocaleString('ko-KR')); // Set server time
     } catch (error) {
       console.error('Error fetching events:', error);
     }
@@ -213,9 +214,9 @@ const FullCalendarPage = () => {
         weekends={true}
         headerToolbar={{
           left: 'prevYear,prev,next,nextYear today',
-          center: 'title',
+          center: `title, ${serverTime}`,
           right: "dayGridMonth,dayGridWeek,dayGridDay, timeGridWeek,timeGridDay"
-        }}        
+        }}
         views={{
           dayGridMonth: { 
             dayMaxEventRows: 16,
