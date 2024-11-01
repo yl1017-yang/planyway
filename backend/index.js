@@ -55,6 +55,7 @@ app.get('/events', async (req, res) => {
 });
 
 app.post('/events', async (req, res) => {
+  req.body.end = new Date(req.body.end).setHours(23, 59, 0, 0);
   const event = new Event(req.body);
   try {
     const newEvent = await event.save();
@@ -65,6 +66,7 @@ app.post('/events', async (req, res) => {
 });
 
 app.put('/events/:id', async (req, res) => {
+  req.body.end = new Date(req.body.end).setHours(23, 59, 0, 0);
   try {
     const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedEvent) {

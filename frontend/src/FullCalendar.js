@@ -25,18 +25,23 @@ const FullCalendarPage = () => {
 
       console.log(response.data);
 
-      const formattedEvents = response.data.map(event => ({
-        id: event._id,
-        title: event.title,
-        description: event.description,
-        start: new Date(event.start).toISOString().split('T')[0], // yyyy-MM-dd 형식으로 변환
-        end: new Date(event.end).toISOString().split('T')[0],
-        backgroundColor: event.backgroundColor,
-        label: event.label,
-        completed: event.completed,
-      }));
-      setEvents(formattedEvents);
-      setServerTime(new Date(response.data.serverTime).toLocaleString('ko-KR')); // Set server time
+      // response.data가 배열인지 확인
+      if (Array.isArray(response.data.events)) {
+          const formattedEvents = response.data.events.map(event => ({
+            id: event._id,
+            title: event.title,
+            description: event.description,
+            start: new Date(event.start).toISOString().split('T')[0], // yyyy-MM-dd 형식으로 변환
+            end: new Date(event.end).toISOString().split('T')[0],
+            backgroundColor: event.backgroundColor,
+            label: event.label,
+            completed: event.completed,
+          }));
+          setEvents(formattedEvents);
+          setServerTime(new Date(response.data.serverTime).toLocaleString('ko-KR')); // Set server time
+      } else {
+        console.error('이벤트 데이터가 배열이 아닙니다:', response.data);
+      }
     } catch (error) {
       console.error('Error fetching events:', error);
     }
@@ -99,7 +104,7 @@ const FullCalendarPage = () => {
             start: new Date(newEvent.start).toISOString(),
             end: new Date(newEvent.end).toISOString(),
         });
-        setEvents([...events, { id: response.data._id, ...response.data }]);
+        setEvents(prevEvents => [...prevEvents, { id: response.data._id, ...response.data }]);
         setShowModal(false);
         setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false }); 
     } catch (error) {
@@ -213,8 +218,8 @@ const FullCalendarPage = () => {
         // timeZone="UTC"
         weekends={true}
         headerToolbar={{
-          left: 'prevYear,prev,next,nextYear today',
-          center: `title, ${serverTime}`,
+          left: `prevYear,prev,next,nextYear today, ${serverTime}`,
+          center: 'title',
           right: "dayGridMonth,dayGridWeek,dayGridDay, timeGridWeek,timeGridDay"
         }}
         views={{
