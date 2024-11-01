@@ -102,7 +102,7 @@ const FullCalendarPage = () => {
         const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', {
             ...newEvent,
             start: new Date(newEvent.start).toISOString(),
-            end: new Date(newEvent.end).toISOString(),
+            end: new Date(newEvent.end).setHours(23, 59, 0, 0), // 수정된 부분
         });
         setEvents(prevEvents => [...prevEvents, { id: response.data._id, ...response.data }]);
         setShowModal(false);
@@ -121,7 +121,7 @@ const FullCalendarPage = () => {
         const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, {
             ...newEvent,
             start: new Date(newEvent.start).toISOString(),
-            end: new Date(newEvent.end).toISOString(),
+            end: new Date(newEvent.end).setHours(23, 59, 0, 0), 
         });
         setEvents(events.map(event => event.id === selectedEvent.id ? { id: response.data._id, ...response.data } : event));
         setShowModal(false);

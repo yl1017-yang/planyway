@@ -48,7 +48,14 @@ app.get('/events', async (req, res) => {
   try {
     const events = await Event.find().limit(limit);
     const serverTime = new Date(); // Get the current server time
-    res.json({ events, serverTime }); // Send both events and server time
+
+    // Format end time to include T23:59
+    const formattedEvents = events.map(event => {
+      event.end = new Date(event.end).setHours(23, 59, 0, 0); // Ensure end time is set to T23:59
+      return event;
+    });
+
+    res.json({ events: formattedEvents, serverTime }); // Send both events and server time
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
