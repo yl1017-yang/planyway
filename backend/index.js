@@ -62,7 +62,8 @@ app.get('/events', async (req, res) => {
 });
 
 app.post('/events', async (req, res) => {
-  req.body.end = new Date(req.body.end).setHours(23, 59, 59, 999);
+  req.body.start = new Date(req.body.start); // UTC로 변환
+  req.body.end = new Date(req.body.end).setHours(23, 59, 59, 999); // UTC로 변환
   const event = new Event(req.body);
   try {
     const newEvent = await event.save();
@@ -73,7 +74,8 @@ app.post('/events', async (req, res) => {
 });
 
 app.put('/events/:id', async (req, res) => {
-  req.body.end = new Date(req.body.end).setHours(23, 59, 59, 999);
+  req.body.start = new Date(req.body.start); // UTC로 변환
+  req.body.end = new Date(req.body.end).setHours(23, 59, 59, 999); // UTC로 변환
   try {
     const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedEvent) {

@@ -25,20 +25,22 @@ const FullCalendarPage = () => {
 
       console.log(response.data);
 
-      // response.data가 배열인지 확인
       if (Array.isArray(response.data.events)) {
-          const formattedEvents = response.data.events.map(event => ({
+        const formattedEvents = response.data.events.map(event => {
+          // UTC에서 로컬 시간으로 변환
+          return {
             id: event._id,
             title: event.title,
             description: event.description,
-            start: new Date(event.start).toISOString().split('T')[0], // yyyy-MM-dd 형식으로 변환
-            end: new Date(event.end).toISOString().split('T')[0],
+            start: new Date(event.start).toISOString(), // ISO 형식으로 변환
+            end: new Date(event.end).toISOString(), // ISO 형식으로 변환
             backgroundColor: event.backgroundColor,
             label: event.label,
             completed: event.completed,
-          }));
-          setEvents(formattedEvents);
-          setServerTime(new Date(response.data.serverTime).toLocaleString('ko-KR')); // Set server time
+          };
+        });
+        setEvents(formattedEvents);
+        setServerTime(new Date(response.data.serverTime).toLocaleString('ko-KR'));
       } else {
         console.error('이벤트 데이터가 배열이 아닙니다:', response.data);
       }
@@ -152,8 +154,8 @@ const FullCalendarPage = () => {
     const updatedEvent = {
       id: changeInfo.event.id,
       title: changeInfo.event.title,
-      start: changeInfo.event.startStr.split('T')[0], 
-      end: changeInfo.event.endStr.split('T')[0],
+      start: new Date(changeInfo.event.start).toISOString(), // 수정된 부분: UTC로 변환
+      end: new Date(changeInfo.event.end).toISOString(), // 수정된 부분: UTC로 변환
       backgroundColor: changeInfo.event.backgroundColor,
       label: changeInfo.event.extendedProps.label,
       completed: changeInfo.event.extendedProps.completed || false,
@@ -171,8 +173,8 @@ const FullCalendarPage = () => {
     const updatedEvent = {
       id: info.event.id,
       title: info.event.title,
-      start: info.event.startStr.split('T')[0],
-      end: info.event.endStr.split('T')[0],
+      start: new Date(info.event.start).toISOString(), // 수정된 부분: UTC로 변환
+      end: new Date(info.event.end).toISOString(), // 수정된 부분: UTC로 변환
       backgroundColor: info.event.backgroundColor,
       label: info.event.extendedProps.label,
       completed: info.event.extendedProps.completed || false,
