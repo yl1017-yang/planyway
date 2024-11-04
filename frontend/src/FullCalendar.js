@@ -217,7 +217,6 @@ const FullCalendarPage = () => {
         height="100vh"
         locale='ko'
         timeZone="Asia/Seoul"
-        // timeZone="UTC"
         weekends={true}
         headerToolbar={{
           left: `prevYear,prev,next,nextYear today, ${serverTime}`,
@@ -253,17 +252,17 @@ const FullCalendarPage = () => {
         eventBackgroundColor="#e6f6e3"
         dateClick={onDateClick}
         eventClick={handleEventClick}
-        eventChange={handleEventChange}// 이벤트 drop 혹은 resize 될 때
         eventContent={eventContent}
-        editable={true} //사용자의 수정 가능 여부 (이벤트 추가/수정, 드래그 앤 드롭 활성화)
+        eventResizableFromStart={true} // 이벤트 크기 조정 가능 여부
         eventDrop={handleEventDrop} // 드래그 앤 드롭 이벤트 처리기 추가
+        eventChange={handleEventChange}// 이벤트 drop 혹은 resize 될 때
+        editable={true} // 사용자의 수정 가능 여부
         selectable={true} // 사용자의 날짜 선택 여부
         droppable={true} //드래그 앤 드롭 기능을 활성화하여 외부 이벤트를 캘린더에 추가
         selectMirror={true} // 사용자의 시간 선택시 time 표시 여부
         nowIndicator={true}
         navLinks={true}
         // navLinkHint={"클릭시 해당 날짜로 이동합니다."} // 날짜에 호버시 힌트 문구
-        eventResizableFromStart={true}
         dayCellContent={dayCellContent}
         eventDisplay="block"
         displayEventEnd={{
