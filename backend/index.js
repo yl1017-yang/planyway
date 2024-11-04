@@ -51,7 +51,7 @@ app.get('/events', async (req, res) => {
 
     // Format end time to include T23:59
     const formattedEvents = events.map(event => {
-      event.end = new Date(event.end).setHours(23, 59, 0, 0); // Ensure end time is set to T23:59
+      event.end = new Date(event.end).setHours(23, 59, 59, 999); // Ensure end time is set to T23:59
       return event;
     });
 
@@ -62,7 +62,7 @@ app.get('/events', async (req, res) => {
 });
 
 app.post('/events', async (req, res) => {
-  req.body.end = new Date(req.body.end).setHours(23, 59, 0, 0);
+  req.body.end = new Date(req.body.end).setHours(23, 59, 59, 999);
   const event = new Event(req.body);
   try {
     const newEvent = await event.save();
@@ -73,7 +73,7 @@ app.post('/events', async (req, res) => {
 });
 
 app.put('/events/:id', async (req, res) => {
-  req.body.end = new Date(req.body.end).setHours(23, 59, 0, 0);
+  req.body.end = new Date(req.body.end).setHours(23, 59, 59, 999);
   try {
     const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedEvent) {
