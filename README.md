@@ -11,15 +11,23 @@ https://www.koyeb.com/
 
 npm install gh-pages
 
---- package.json ----
-"homepage": "https://yl1017-yang.github.io/planyway",
-"scripts": {
-    (...)
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+--- package.json ----\
+"homepage": "https://yl1017-yang.github.io/planyway",\
+"scripts": {\
+    (...)\
+    "predeploy": "npm run build",\
+    "deploy": "gh-pages -d build"\
   },
 
 
+## 실행방법
+cd frontend\
+npm start\
+npm run build\
+npm run deploy\
+
+cd backend\
+node index.js\
 
 
 ## 프로그램: fullcalendar api 사용
