@@ -21,7 +21,7 @@ const FullCalendarPage = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get('https://wet-luisa-yang-yang-253f1741.koyeb.app/events?limit=7');
+      const response = await axios.get('https://yl1017-yang.github.io/planyway/events?limit=7');
 
       console.log(response.data);
 
@@ -101,7 +101,7 @@ const FullCalendarPage = () => {
         return;
     }
     try {
-        const response = await axios.post('https://wet-luisa-yang-yang-253f1741.koyeb.app/events', {
+        const response = await axios.post('https://yl1017-yang.github.io/planyway/events', {
             ...newEvent,
             start: new Date(newEvent.start).toISOString(),
             end: new Date(newEvent.end).setHours(23, 59, 59, 999), // 수정된 부분
@@ -120,7 +120,7 @@ const FullCalendarPage = () => {
         return;
     }
     try {
-        const response = await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`, {
+        const response = await axios.put(`https://yl1017-yang.github.io/planyway/events/${selectedEvent.id}`, {
             ...newEvent,
             start: new Date(newEvent.start).toISOString(),
             end: new Date(newEvent.end).setHours(23, 59, 59, 999), // 수정된 부분
@@ -140,7 +140,7 @@ const FullCalendarPage = () => {
       return;
     }
     try {
-      await axios.delete(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${selectedEvent.id}`);
+      await axios.delete(`https://yl1017-yang.github.io/planyway/events/${selectedEvent.id}`);
       setEvents(events.filter(event => event.id !== selectedEvent.id));
       setShowModal(false);
       setNewEvent({ title: '', description: '', start: '', end: '', backgroundColor: '', label: '', completed: false });
@@ -162,7 +162,7 @@ const FullCalendarPage = () => {
     };
 
     try {
-      await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${updatedEvent.id}`, updatedEvent);
+      await axios.put(`https://yl1017-yang.github.io/planyway/events/${updatedEvent.id}`, updatedEvent);
       setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
     } catch (error) {
       console.error('Error updating event:', error);
@@ -181,7 +181,7 @@ const FullCalendarPage = () => {
     };
 
     try {
-      await axios.put(`https://wet-luisa-yang-yang-253f1741.koyeb.app/events/${updatedEvent.id}`, updatedEvent);
+      await axios.put(`https://yl1017-yang.github.io/planyway/events/${updatedEvent.id}`, updatedEvent);
       setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
     } catch (error) {
       console.error('Error updating event:', error);
@@ -270,6 +270,8 @@ const FullCalendarPage = () => {
           basicWeek: true,
           default: true
         }}
+        eventAdd={handleAddEvent} // 이벤트 추가 핸들러
+        eventRemove={handleDeleteEvent} // 이벤트 삭제 핸들러   
       />
 
       {showModal && (
